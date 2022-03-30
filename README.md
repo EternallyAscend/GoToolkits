@@ -38,7 +38,8 @@ source ~/.profile
 
 # Set Proxy for go install (or go get).
 go env -w GO111MODULE=on
-go env -w GOPROXY=https://goproxy.io,direct
+go env -w GOPROXY=https://goproxy.cn,direct
+# go env -w GOPROXY=https://goproxy.io,direct
 # go env -w GOPROXY=https://mirrors.aliyun.com/goproxy
 
 # Install Go-Redis for go environment.
@@ -49,7 +50,7 @@ go install github.com/kataras/iris/v12@latest
 ```
 
 ## Include to project.
-Create program like [`entry`](./entry) with [go.mod](./go.mod) file.
+Create program like [`entry`](./pkg/entry) with [go.mod](./go.mod) file.
 
 ## Repo.
 - `GitHub` [https://github.com/EternallyAscend/GoToolkits](https://github.com/EternallyAscend/GoToolkits)
