@@ -2,8 +2,8 @@ package goRedis
 
 // go-redis
 
-// errorNotFound 中数据查询为空时的返回值。
-const errorNotFound = "redis: nil"
+// ErrorNotFound 中数据查询为空时的返回值。
+const ErrorNotFound = "redis: nil"
 
 // 自定义对外暴露的错误信息
 
