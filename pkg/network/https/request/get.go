@@ -2,8 +2,8 @@ package request
 
 import (
 	"errors"
-	"github.com/EternallyAscend/GoToolkit/pkg/network/https/header"
-	"github.com/EternallyAscend/GoToolkit/pkg/network/https/response"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/https/header"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/https/response"
 	"net/http"
 	"net/url"
 )

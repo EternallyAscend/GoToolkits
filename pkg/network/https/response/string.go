@@ -3,8 +3,8 @@ package response
 import (
 	"encoding/json"
 	"fmt"
-	gtkHttp "github.com/EternallyAscend/GoToolkit/pkg/network/https"
-	gtkHeader "github.com/EternallyAscend/GoToolkit/pkg/network/https/header"
+	gtkHttp "github.com/EternallyAscend/GoToolkits/pkg/network/https"
+	gtkHeader "github.com/EternallyAscend/GoToolkits/pkg/network/https/header"
 	"net/http"
 )
 
