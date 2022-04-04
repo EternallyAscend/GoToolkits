@@ -64,6 +64,12 @@ docker run -itd --name jupyter -p 8888:8888 tensorflow/tensorflow:latest-jupyter
 docker run -itd --name p36tf115 -p 8888:8888 python:3.6
 docker exec -d p36tf115 jupyter notebook --ip=0.0.0.0 --allow-root
 docker exec -it p36tf115 jupyter notebook list
+docker run -itd --name p36lab -p 8888:8888 -v /usr/share/website/P36Lab:/projects python:3.6
+pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+pip install jupyterlab
+docker exec -itd p36lab jupyter lab --allow-root --autoreload --ip="0.0.0.0" --port=8888
+docker exec -it p36lab jupyter server list
+b6bf31cf85638c9a276efb04c1b455c888af2f81590ec315
 
 # docker run -itd -p 6379:6379 -v /root/redis/config:/etc/redis -v /root/redis/data:/data -v /root/redis/log:/var/log/redis -v /root/redis/lib:/var/lib/redis --name redis redis redis-server /etc/redis/redis.conf --appendonly yes
 docker run -itd -p 6379:6379 -v /root/redis:/data --name redis redis redis-server /data/config/redis.conf

@@ -1,4 +1,4 @@
-module github.com/EternallyAscend/GoToolkit
+module github.com/EternallyAscend/GoToolkits
 
 go 1.17
 
@@ -12,6 +12,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/marcusolsson/tui-go v0.4.0
 	github.com/sevlyar/go-daemon v0.1.5
+	github.com/tcolgate/mp3 v0.0.0-20170426193717-e79c5a46d300
 )
 
 require (
