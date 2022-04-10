@@ -13,6 +13,7 @@ require (
 	github.com/marcusolsson/tui-go v0.4.0
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/tcolgate/mp3 v0.0.0-20170426193717-e79c5a46d300
+	golang.org/x/crypto v0.0.0-20220408190544-5352b0902921
 )
 
 require (
@@ -34,7 +35,7 @@ require (
 	github.com/onsi/gomega v1.10.1 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/tjfoc/gmsm v1.3.2 // indirect
-	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
+	golang.org/x/net v0.0.0-20211112202133-69e39bad7dc2 // indirect
 	golang.org/x/sys v0.0.0-20220327210214-530d0810a4d0 // indirect
 	golang.org/x/text v0.3.6 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect

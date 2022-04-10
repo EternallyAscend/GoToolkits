@@ -2,7 +2,7 @@ package hash
 
 import "crypto/md5"
 
-// md5 https://www.jianshu.com/p/5b6f7110eb52
+// https://www.jianshu.com/p/5b6f7110eb52
 
 func MD5(value []byte) []byte {
 	hashValue := md5.New()
