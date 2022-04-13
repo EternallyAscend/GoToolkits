@@ -6,6 +6,14 @@ func GetTime() string {
 	return time.Now().String()[0:19]
 }
 
+func GetTimestampSecond() int64 {
+	return time.Now().Unix()
+}
+
+func GetTimestampNano() int64 {
+	return time.Now().UnixNano()
+}
+
 func GetTimeDurationMillisecond(ms uint64) time.Duration {
 	return time.Duration(ms) * time.Millisecond
 }
