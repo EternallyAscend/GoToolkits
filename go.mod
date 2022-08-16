@@ -7,6 +7,7 @@ require (
 	github.com/alibabacloud-go/dingtalk v1.3.13
 	github.com/alibabacloud-go/tea v1.1.17
 	github.com/alibabacloud-go/tea-utils v1.4.4
+	github.com/bwesterb/go-ristretto v1.2.2
 	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/gofrs/uuid v4.2.0+incompatible
 	github.com/golang-jwt/jwt v3.2.2+incompatible
