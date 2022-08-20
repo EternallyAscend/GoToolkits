@@ -107,24 +107,64 @@ type VerifiableMessageUint struct {
 	CommitPoint *ristretto.Point
 }
 
+// VerifiableMessage 可验证消息，VP中的单条Verifiable Credentials
 type VerifiableMessage struct {
 	Dealer *DealerUnit
 	Data [][]byte
 	Units []*VerifiableMessageUint
 }
 
+// GenerateVerifiableMessage 生成一个空的可验证消息，含有公钥
+func GenerateVerifiableMessage() *VerifiableMessage {
+	return &VerifiableMessage{
+		Dealer: GenerateDealer(),
+		Data:   [][]byte{},
+		Units:  []*VerifiableMessageUint{},
+	}
+}
+
+// AppendData 向单条可验证消息VC中增加一行可验证消息
 func (that *VerifiableMessage) AppendData(data []byte, encrypt bool) *VerifiableMessage {
 	if encrypt {
 		that.Data = append(that.Data, nil)
 	} else {
 		that.Data = append(that.Data, data)
 	}
+
+	r := &ristretto.Scalar{}
+	r.Rand()
+	c := &ristretto.Point{}
+
+	tempPoint := ristretto.Point{}
+	// c = xG + rH
+	x := ristretto.Scalar{}
+	x.Derive(data)
+	// xG
+	tempPoint.ScalarMult(that.Dealer.G, &x)
+	// rH
+	c.ScalarMult(that.Dealer.H, r)
+	// c = xG + rH
+	c.Add(c, &tempPoint)
+
+	if 0 == len(that.Units) {
+		that.Dealer.R = &ristretto.Scalar{}
+		that.Dealer.R.Set(r)
+	} else {
+		that.Dealer.R.Add(that.Dealer.R, r)
+	}
+
+	unit := &VerifiableMessageUint{
+		R:           r,
+		CommitPoint: c,
+	}
+	that.Units = append(that.Units, unit)
 	return that
 }
 
+// AppendDataArray 向单条可验证消息VC中增加一组可验证消息
 func (that *VerifiableMessage) AppendDataArray(data [][]byte, encrypt []bool) *VerifiableMessage {
 	if len(data) != len(encrypt) {
-
+		return nil
 	}
 	for i := range data {
 		that.AppendData(data[i], encrypt[i])
@@ -132,15 +172,86 @@ func (that *VerifiableMessage) AppendDataArray(data [][]byte, encrypt []bool) *V
 	return that
 }
 
+func (that *VerifiableMessage) ConfirmMessage(data [][]byte) *VerifiableMessage {
+	if nil == that.Dealer.R {
+		return nil
+	}
+	if len(that.Data) != len(that.Units) {
+		return nil
+	}
+	if len(data) != len(that.Data) {
+		return nil
+	}
+	x := ristretto.Scalar{}
+	x.Derive(data[0])
+	tx := ristretto.Scalar{}
+	tx.Set(&x)
+	for i := 1; i < len(data); i++ {
+		x.Derive(data[i])
+		tx.Add(&tx, &x)
+	}
+
+	tempPoint := ristretto.Point{}
+	// c = xG + rH
+	that.Dealer.CommitPoint = &ristretto.Point{}
+	// xG
+	tempPoint.ScalarMult(that.Dealer.G, &tx)
+	// rH
+	that.Dealer.CommitPoint.ScalarMult(that.Dealer.H, that.Dealer.R)
+	// c = xG + rH
+	that.Dealer.CommitPoint.Add(that.Dealer.CommitPoint, &tempPoint)
+
+ 	return that
+}
+
+// OpenLine 打开提供的一行数据并验证正确性
 func (that *VerifiableMessage) OpenLine(line uint) bool {
-	return true
+	if len(that.Units) != len(that.Data) {
+		return false
+	}
+ 	if int(line) > len(that.Data) {
+		return false
+	}
+	if nil == that.Data[line] {
+		return false
+	}
+
+	tc := ristretto.Point{}
+
+	tempPoint := ristretto.Point{}
+	// c = xG + rH
+	x := ristretto.Scalar{}
+	x.Derive(that.Data[line])
+	// xG
+	tempPoint.ScalarMult(that.Dealer.G, &x)
+	// rH
+	tc.ScalarMult(that.Dealer.H, that.Units[line].R)
+	// c = xG + rH
+	tc.Add(&tc, &tempPoint)
+	return tc.Equals(that.Units[line].CommitPoint)
 }
 
+// Verify 验证可验证消息的完整性
 func (that *VerifiableMessage) Verify() bool {
-
-	return true
+	if len(that.Data) != len(that.Units) {
+		return false
+	}
+	if len(that.Data) > 0 {
+		tr := ristretto.Scalar{}
+		tc := ristretto.Point{}
+		tr.Set(that.Units[0].R)
+		tc.Set(that.Units[0].CommitPoint)
+		for i := 1; i < len(that.Data); i++ {
+			tr.Add(&tr, that.Units[i].R)
+			tc.Add(&tc, that.Units[i].CommitPoint)
+		}
+		return that.Dealer.CommitPoint.Equals(&tc) && that.Dealer.R.Equals(&tr)
+	} else {
+		return true
+	}
 }
 
+// CheckAll 检查可验证消息的完整性并验证验证提供的每一条数据正确性
 func (that *VerifiableMessage) CheckAll() bool {
 	for i := range that.Data {
 		if nil != that.Data[i] {
@@ -149,7 +260,28 @@ func (that *VerifiableMessage) CheckAll() bool {
 			}
 		}
 	}
+	// Reach here means every common lines are right. Only need to verify.
 	return that.Verify()
+}
+
+func (that *VerifiableMessage) ExportMessagesAsByteArray() [][]byte {
+	var data [][]byte
+	for i := range that.Data {
+		if nil != that.Data[i] {
+			data = append(data, that.Data[i])
+		}
+	}
+	return data
+}
+
+func (that *VerifiableMessage) ExportMessagesAsString() []string {
+	var data []string
+	for i := range that.Data {
+		if nil != that.Data[i] {
+			data = append(data, string(that.Data[i]))
+		}
+	}
+	return data
 }
 
 type VerifiableDataUnit struct {
