@@ -17,6 +17,14 @@ func GenerateCommand(str string) *Command {
 	}
 }
 
+func GenerateCommands(strs []string) []*Command {
+	var cmds []*Command
+	for i := range strs {
+		cmds = append(cmds, GenerateCommand(strs[i]))
+	}
+	return cmds
+}
+
 func (that *Command) name() string {
 	pos := strings.IndexAny(that.str, " ")
 	if pos > 0 {

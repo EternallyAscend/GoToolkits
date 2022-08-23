@@ -3,13 +3,28 @@ package main
 import (
 	"fmt"
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/Medias/music"
+	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller"
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/homomorphic/pedersonCommitment"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/gRPC"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/ssh"
 	"os"
 )
 
 func main() {
+	sshClient := ssh.GenerateDefaultClientSSH("root", "192.168.3.21", 22, "linux", "")
+	err := sshClient.Connect()
+	if nil != err {
+		fmt.Println(err)
+	}
+	bools := controller.InstallEnvironment(sshClient)
+	fmt.Println(bools)
+	bools = controller.PullDockerImages(sshClient)
+	fmt.Println(bools)
+	bools = controller.PullFabricBinaryFiles(sshClient)
+	fmt.Println(bools)
+	_ = sshClient.Close()
+	os.Exit(0)
 	//vm := &pedersonCommitment.VerifiableMessage{}
 	//fmt.Println(vm)
 	//dealer := pedersonCommitment.GenerateDealer()
