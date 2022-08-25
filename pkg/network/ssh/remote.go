@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/ssh"
 	"io/ioutil"
 	"net"
+	"sync"
 	"time"
 )
 
@@ -112,6 +113,26 @@ func (that *Client) ExecuteMultiCommands(commands []*command.Command) ([]string,
 		return result, errorList, nil
 	}
 	return nil, nil, errors.New("SSH: Must connect before execute commands (client is nil). ")
+}
+
+func (that *Client) ExecuteMultiParallelCommands(commands []*command.Command) ([]string, []error, error) {
+	result := make([]string, len(commands))
+	errorList := make([]error, len(commands))
+	var err error
+	waitGroup := sync.WaitGroup{}
+	waitGroup.Add(len(commands))
+	for i := range commands {
+		go func (i int) {
+			var errIn error
+			result[i], errorList[i], errIn = that.ExecuteSingleCommand(commands[i])
+			if nil != err {
+				err = errIn
+			}
+			waitGroup.Done()
+		}(i)
+	}
+	waitGroup.Wait()
+	return result, errorList, err
 }
 
 func (that *Client) Close() error {
