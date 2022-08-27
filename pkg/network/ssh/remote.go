@@ -6,6 +6,7 @@ import (
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"golang.org/x/crypto/ssh"
 	"io/ioutil"
+	"log"
 	"net"
 	"sync"
 	"time"
@@ -17,7 +18,7 @@ type Client struct {
 	port         uint
 	user         string
 	clientConfig *ssh.ClientConfig
-	client *ssh.Client
+	client       *ssh.Client
 }
 
 func GenerateDefaultClientSSH(user string, ipv4 string, port uint, password string, publicKeyPath string) *Client {
@@ -122,12 +123,13 @@ func (that *Client) ExecuteMultiParallelCommands(commands []*command.Command) ([
 	waitGroup := sync.WaitGroup{}
 	waitGroup.Add(len(commands))
 	for i := range commands {
-		go func (i int) {
+		go func(i int) {
 			var errIn error
 			result[i], errorList[i], errIn = that.ExecuteSingleCommand(commands[i])
 			if nil != err {
 				err = errIn
 			}
+			log.Println(commands[i])
 			waitGroup.Done()
 		}(i)
 	}

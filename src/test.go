@@ -19,11 +19,14 @@ func main() {
 	}
 	bools := controller.InstallEnvironment(sshClient)
 	fmt.Println(bools)
-	bools = controller.PullDockerImages(sshClient)
+	bools = controller.CheckEnvironment(sshClient)
 	fmt.Println(bools)
-	bools = controller.PullFabricBinaryFiles(sshClient)
-	fmt.Println(bools)
+	//bools = controller.PullDockerImages(sshClient)
+	//fmt.Println(bools)
+	//bools = controller.PullFabricBinaryFiles(sshClient)
+	//fmt.Println(bools)
 	_ = sshClient.Close()
+
 	os.Exit(0)
 	//vm := &pedersonCommitment.VerifiableMessage{}
 	//fmt.Println(vm)
