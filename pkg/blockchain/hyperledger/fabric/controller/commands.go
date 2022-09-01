@@ -7,7 +7,9 @@ import (
 
 func checkEnvironmentCommand() []*command.Command {
 	return command.GenerateCommands([]string{
-		"faberGo=$(go version)" +
+		"echo $PATH",
+		"source /etc/profile" +
+			"&& faberGo=$(go version)" +
 			"&& faberGo=$(echo ${faberGo##*version })" +
 			"&& faberGoVersion=$(echo ${faberGo##*go})" +
 			"&& faberGoVersion=$(echo ${faberGoVersion% *})" +
@@ -39,7 +41,7 @@ func installEnvironmentCommand() []*command.Command {
 		"go version",
 		"docker -v",
 		"docker-compose -v",
-		"https://go.dev/dl/go1.19.linux-amd64.tar.gz",
+		//"https://go.dev/dl/go1.19.linux-amd64.tar.gz",
 		//"git clone https://github.com/hyperledger/fabric-samples.git",
 	})
 }

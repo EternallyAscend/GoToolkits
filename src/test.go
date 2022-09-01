@@ -5,6 +5,7 @@ import (
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/Medias/music"
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller"
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
+	"github.com/EternallyAscend/GoToolkits/pkg/container/docker/dockerCompose"
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/homomorphic/pedersonCommitment"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/gRPC"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ssh"
@@ -12,6 +13,12 @@ import (
 )
 
 func main() {
+	dealer := dockerCompose.GenerateDockerYAML("2")
+	dealer.AddNetwork("test", dockerCompose.GenerateNetwork("testNetwork"))
+	dealer.AddService("ca", dockerCompose.GenerateService())
+	data, _ := dealer.ExportToByteArray()
+	fmt.Println(string(data))
+	os.Exit(0)
 	sshClient := ssh.GenerateDefaultClientSSH("root", "192.168.3.21", 22, "linux", "")
 	err := sshClient.Connect()
 	if nil != err {
