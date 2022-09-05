@@ -27,3 +27,8 @@ func PullFabricDockerImages(version string, versionCA string) []string {
 func RunDockerContainer() []string {
 	return []string{}
 }
+
+func GenerateCaYaml(path string) error {
+
+	return nil
+}

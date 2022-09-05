@@ -1,0 +1,18 @@
+image: hyperledger/fabric-ca:2.2
+environment:
+- FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+- FABRIC_CA_SERVER_CA_NAME=ca-org1
+- FABRIC_CA_SERVER_TLS_ENABLED=false
+- FABRIC_CA_SERVER_PORT=7054
+- FABRIC_CA_SERVER_OPERATIONS_LISTENADDRESS=0.0.0.0:17054
+ports:
+- 7054:7054
+- 17054:17054
+command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
+volumes:
+- ../organizations/fabric-ca/org1:/etc/hyperledger/fabric-ca-server
+container_name: ca-org1
+networks:
+- test1
+- test2
+- test3

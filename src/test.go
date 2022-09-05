@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/Medias/music"
+	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller"
+	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/docker"
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"github.com/EternallyAscend/GoToolkits/pkg/container/docker/dockerCompose"
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/homomorphic/pedersonCommitment"
@@ -14,8 +16,13 @@ import (
 
 func main() {
 	dealer := dockerCompose.GenerateDockerYAML("2")
-	dealer.AddNetwork("test", dockerCompose.GenerateNetwork("testNetwork"))
-	dealer.AddService("ca", dockerCompose.GenerateService())
+	dealer.AddNetwork(dockerCompose.GenerateNetwork("testNetwork"))
+	cas := docker.GenerateCaServices("2.2", "ca-org1", false, 7054, 17054, "../organizations/fabric-ca/org1", "adminpw", "test1", "test2", "test3")
+	YAML.ExportToFileYaml(cas, "./cas.yaml")
+	dealer.AddService(cas)
+
+	dealer.AddNetwork(dockerCompose.GenerateNetwork("test"))
+	YAML.ExportToFileYaml(dealer, "./dealer.yaml")
 	data, _ := dealer.ExportToByteArray()
 	fmt.Println(string(data))
 	os.Exit(0)

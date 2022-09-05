@@ -10,6 +10,10 @@ type Service struct {
 	Volumes       []string `yaml:"volumes"`
 	ContainerName string   `yaml:"container_name"`
 	Networks      []string `yaml:"networks"`
+	WorkingDir	  string   `yaml:"working_dir"`
+	DependsOn 	  []string `yaml:"depends_on"`
+	Tty			  bool 	   `yaml:"tty"`
+	StdinOpen 	  bool 	   `yaml:"stdin_open"`
 }
 
 func GenerateService() *Service {
@@ -21,6 +25,10 @@ func GenerateService() *Service {
 		Volumes:       []string{},
 		ContainerName: "",
 		Networks:      []string{},
+		WorkingDir:    "",
+		DependsOn: 	   []string{},
+		Tty: 		   false,
+		StdinOpen: 	   false,
 	}
 }
 
