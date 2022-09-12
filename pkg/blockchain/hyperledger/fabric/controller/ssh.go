@@ -6,7 +6,7 @@ import (
 	"log"
 )
 
-func ExecuteControllerCommand(target *ssh.Client, commands []*command.Command) bool {
+func ExecuteControllerCommand(target *ssh.IPv4Client, commands []*command.Command) bool {
 	if nil == target {
 		return false
 	}
@@ -21,7 +21,7 @@ func ExecuteControllerCommand(target *ssh.Client, commands []*command.Command) b
 	return true
 }
 
-func ExecuteControllerParallelCommand(target *ssh.Client, commands []*command.Command) bool {
+func ExecuteControllerParallelCommand(target *ssh.IPv4Client, commands []*command.Command) bool {
 	if nil == target {
 		return false
 	}

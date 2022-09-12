@@ -5,7 +5,7 @@ import (
 	"github.com/EternallyAscend/GoToolkits/pkg/container/docker/dockerCompose"
 )
 
-func GenerateToolsService(imageVersion string, name string, dependOn []string, networks ...string) *dockerCompose.Service {
+func GenerateToolsService(imageVersion string, name string, dependOn []string, orgConfigPath string, scriptPath string, networks ...string) *dockerCompose.Service {
 	return &dockerCompose.Service{
 		Image:         fmt.Sprintf("hyperledger/fabric-tools:%s", imageVersion),
 		Environment:   []string{
@@ -16,7 +16,8 @@ func GenerateToolsService(imageVersion string, name string, dependOn []string, n
 		Command:       "/bin/bash",
 		Volumes:       []string{
 			"/var/run/:/host/var/run/",
-
+			fmt.Sprintf("%S:/opt/gopath/src/github.com/hyperledger/fabric/peer/organizations", orgConfigPath),
+			fmt.Sprintf("%s:/opt/gopath/src/github.com/hyperledger/fabric/peer/scripts/", scriptPath),
 		},
 		ContainerName: name,
 		Networks:      networks,

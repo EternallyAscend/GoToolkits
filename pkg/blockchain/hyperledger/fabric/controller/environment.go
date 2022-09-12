@@ -6,11 +6,11 @@ import (
 	"log"
 )
 
-func InstallEnvironment(target *ssh.Client) bool {
+func InstallEnvironment(target *ssh.IPv4Client) bool {
 	return ExecuteControllerCommand(target, installGolang("1.19", "linux", "amd64"))
 }
 
-func CheckEnvironment(target *ssh.Client) bool {
+func CheckEnvironment(target *ssh.IPv4Client) bool {
 	res := command.ExecuteMultiCommands(checkEnvironmentCommand())
 	for i := range res {
 		log.Println(res[i].GetOutputAsString(), res[i].GetErrorAsString(), res[i].GetErr())
@@ -19,7 +19,7 @@ func CheckEnvironment(target *ssh.Client) bool {
 	//return ExecuteControllerCommand(target, checkEnvironmentCommand())
 }
 
-func PullDockerImages(target *ssh.Client) bool {
+func PullDockerImages(target *ssh.IPv4Client) bool {
 	if nil == target {
 		return false
 	}
@@ -43,6 +43,6 @@ func PullDockerImages(target *ssh.Client) bool {
 	return true
 }
 
-func PullFabricBinaryFiles(target *ssh.Client) bool {
+func PullFabricBinaryFiles(target *ssh.IPv4Client) bool {
 	return ExecuteControllerParallelCommand(target, pullFabricBinaryFilesCommand("2.2.0", "1.4.8"))
 }

@@ -24,3 +24,7 @@ services:
     - test1
     - test2
     - test3
+    working_dir: ""
+    depends_on: []
+    tty: false
+    stdin_open: false

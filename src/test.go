@@ -15,6 +15,12 @@ import (
 )
 
 func main() {
+	scli, _ := ssh.ReadPwdClientFromYaml("./config/testServer.yaml")
+	cli := scli.CreateClient()
+	cli.Connect()
+	fmt.Println(cli.ExecuteSingleCommand(command.GenerateCommand("which docker")))
+	cli.Close()
+
 	dealer := dockerCompose.GenerateDockerYAML("2")
 	dealer.AddNetwork(dockerCompose.GenerateNetwork("testNetwork"))
 	cas := docker.GenerateCaServices("2.2", "ca-org1", false, 7054, 17054, "../organizations/fabric-ca/org1", "adminpw", "test1", "test2", "test3")
@@ -26,7 +32,7 @@ func main() {
 	data, _ := dealer.ExportToByteArray()
 	fmt.Println(string(data))
 	os.Exit(0)
-	sshClient := ssh.GenerateDefaultClientSSH("root", "192.168.3.21", 22, "linux", "")
+	sshClient := ssh.GenerateDefaultIPv4ClientSSH("root", "192.168.3.21", 22, "linux", "")
 	err := sshClient.Connect()
 	if nil != err {
 		fmt.Println(err)

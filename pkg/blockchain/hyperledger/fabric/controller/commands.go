@@ -68,3 +68,10 @@ func pullFabricBinaryFilesCommand(version string, versionCA string) []*command.C
 		fmt.Sprintf(ca, versionCA, versionCA),
 	})
 }
+
+func makeFabricBinaryFilesCommand(versiion string, versionCA string) []*command.Command {
+	return command.GenerateCommands([]string{
+		"sudo apt-get -y install build-essential libtool",
+		fmt.Sprintf(""),
+	})
+}

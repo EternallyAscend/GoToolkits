@@ -12,3 +12,12 @@ func ExportToFileYaml(data interface{}, path string) error {
 	}
 	return file.CreateOrRewrite(byteData, path)
 }
+
+func ReadStructFromFileYaml(data interface{}, path string) error {
+	byteData, err := file.ReadFile(path)
+	if nil != err {
+		return err
+	}
+	err = yaml.Unmarshal(byteData, data)
+	return err
+}

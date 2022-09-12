@@ -3,6 +3,7 @@ package ssh
 import (
 	"errors"
 	"fmt"
+	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"golang.org/x/crypto/ssh"
 	"io/ioutil"
@@ -12,7 +13,31 @@ import (
 	"time"
 )
 
-type Client struct {
+type SavedIPv4Client struct {
+	Ipv4 string `yaml:"ipv4"`
+	Port uint `yaml:"port"`
+	User string `yaml:"user"`
+	Pwd string `yaml:"pwd"`
+	Puk string `yaml:"puk"`
+}
+
+func ReadPwdClientFromYaml(yamlPath string) (*SavedIPv4Client, error) {
+	cli := &SavedIPv4Client{}
+	//byteData, err := file.ReadFile(yamlPath)
+	//if nil != err {
+	//	return nil, err
+	//}
+	//err = yaml.Unmarshal(byteData, cli)
+	//fmt.Println(string(byteData), *cli)
+	err := YAML.ReadStructFromFileYaml(cli, yamlPath)
+	return cli, err
+}
+
+func (that *SavedIPv4Client) CreateClient() *IPv4Client {
+	return GenerateDefaultIPv4ClientSSH(that.User, that.Ipv4, that.Port, that.Pwd, that.Puk)
+}
+
+type IPv4Client struct {
 	err          error
 	ipv4         string
 	port         uint
@@ -21,8 +46,8 @@ type Client struct {
 	client       *ssh.Client
 }
 
-func GenerateDefaultClientSSH(user string, ipv4 string, port uint, password string, publicKeyPath string) *Client {
-	cli := &Client{
+func GenerateDefaultIPv4ClientSSH(user string, ipv4 string, port uint, password string, publicKeyPath string) *IPv4Client {
+	cli := &IPv4Client{
 		err:  nil,
 		ipv4: ipv4,
 		port: port,
@@ -63,11 +88,11 @@ func GenerateDefaultClientSSH(user string, ipv4 string, port uint, password stri
 	return cli
 }
 
-func (that *Client) GetIPv4AddressAsString() string {
+func (that *IPv4Client) GetIPv4AddressAsString() string {
 	return fmt.Sprintf("%s:%d", that.ipv4, that.port)
 }
 
-func (that *Client) Connect() error {
+func (that *IPv4Client) Connect() error {
 	if nil == that.client {
 		var err error
 		that.client, err = ssh.Dial("tcp", that.GetIPv4AddressAsString(), that.clientConfig)
@@ -78,7 +103,7 @@ func (that *Client) Connect() error {
 	return nil
 }
 
-func (that *Client) ExecuteSingleCommand(c *command.Command) (string, error, error) {
+func (that *IPv4Client) ExecuteSingleCommand(c *command.Command) (string, error, error) {
 	if nil != that.client {
 		session, err := that.client.NewSession()
 		defer session.Close()
@@ -91,7 +116,7 @@ func (that *Client) ExecuteSingleCommand(c *command.Command) (string, error, err
 	return "", nil, errors.New("SSH: Must connect before execute commands (client is nil). ")
 }
 
-func (that *Client) ExecuteMultiCommands(commands []*command.Command) ([]string, []error, error) {
+func (that *IPv4Client) ExecuteMultiCommands(commands []*command.Command) ([]string, []error, error) {
 	if nil != that.client {
 		var result []string
 		var errorList []error
@@ -116,7 +141,7 @@ func (that *Client) ExecuteMultiCommands(commands []*command.Command) ([]string,
 	return nil, nil, errors.New("SSH: Must connect before execute commands (client is nil). ")
 }
 
-func (that *Client) ExecuteMultiParallelCommands(commands []*command.Command) ([]string, []error, error) {
+func (that *IPv4Client) ExecuteMultiParallelCommands(commands []*command.Command) ([]string, []error, error) {
 	result := make([]string, len(commands))
 	errorList := make([]error, len(commands))
 	var err error
@@ -137,7 +162,7 @@ func (that *Client) ExecuteMultiParallelCommands(commands []*command.Command) ([
 	return result, errorList, err
 }
 
-func (that *Client) Close() error {
+func (that *IPv4Client) Close() error {
 	if nil != that.client {
 		return that.client.Close()
 	}

@@ -7,3 +7,5 @@
 *.html
 *.mp4
 *.wav
+
+./config
