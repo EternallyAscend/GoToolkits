@@ -17,6 +17,14 @@ func GenerateCommand(str string) *Command {
 	}
 }
 
+func MergeCommandsStringArray(strs ...[]string) []string {
+	var cmds []string
+	for i := range strs {
+		cmds = append(cmds, strs[i]...)
+	}
+	return cmds
+}
+
 func GenerateCommands(strs []string) []*Command {
 	var cmds []*Command
 	for i := range strs {
