@@ -19,3 +19,9 @@ func InstallWgetCommand() []string {
 		"apt-get -y install wget",
 	}
 }
+
+func InstallBuildEssentialCommand() []string {
+	return []string{
+		"apt-get -y install build-essential",
+	}
+}

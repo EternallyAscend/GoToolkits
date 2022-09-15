@@ -9,16 +9,22 @@ func InstallDockerCommand() []string {
 }
 
 func CheckDockerCommand() []string {
-	return []string{}
+	// check exists and TODO version
+	return []string{
+		"which docker",
+	}
 }
 
 func CheckDockerComposeCommand() []string {
-	return []string{}
+	// check exists and TODO version
+	return []string{
+		"which docker-compose",
+	}
 }
 
 func SetDockerImageOriginCommand() []string {
 	return []string{
-		"echo '{\n\"registry-mirrors\": [\"https://registry.docker-cn.com\"]\n}\n' >> /etc/docker/daemon.json",
+		"echo '{\n\"registry-mirrors\": [\"https://registry.docker-cn.com\"]\n}\n' > /etc/docker/daemon.json",
 	}
 }
 

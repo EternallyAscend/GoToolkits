@@ -15,6 +15,8 @@ import (
 )
 
 func main() {
+	controller.TestFaber()
+	os.Exit(0)
 	scli, _ := ssh.ReadPwdClientFromYaml("./config/testServer.yaml")
 	cli := scli.CreateClient()
 	cli.Connect()

@@ -9,3 +9,5 @@
 *.wav
 
 ./config
+
+pkg/blockchain/hyperledger/fabric/fabric-samples
