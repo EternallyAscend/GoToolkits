@@ -7,8 +7,8 @@ import (
 
 func GeneratePeerService(imageVersion string, domain string, network string, tls bool, tlsPath string, profile bool, msp string, mspPath string, peerPort uint, chaincodePort uint, operationsPort uint) *dockerCompose.Service {
 	service := &dockerCompose.Service{
-		Image:         fmt.Sprintf("hyperledger/fabric-peer:%s", imageVersion),
-		Environment:   []string{
+		Image: fmt.Sprintf("hyperledger/fabric-peer:%s", imageVersion),
+		Environment: []string{
 			"CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock",
 			fmt.Sprintf("CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=%s", network),
 			"FABRIC_LOGGING_SPEC=INFO",
@@ -24,23 +24,24 @@ func GeneratePeerService(imageVersion string, domain string, network string, tls
 			fmt.Sprintf("CORE_PEER_LOCALMSPID=%s", msp),
 			fmt.Sprintf("CORE_OPERATIONS_LISTENADDRESS=%s:%d", domain, operationsPort),
 		},
-		Ports:         []string{
+		Ports: []string{
 			fmt.Sprintf("%d:%d", peerPort, peerPort),
 			fmt.Sprintf("%d:%d", chaincodePort, chaincodePort),
 			fmt.Sprintf("%d:%d", operationsPort, operationsPort),
 		},
-		Command:       "peer node start",
-		Volumes:       []string{
+		Command: "peer node start",
+		Volumes: []string{
 			"/var/run/docker.sock:/host/var/run/docker.sock",
 			fmt.Sprintf("%s:/etc/hyperledger/fabric/msp", mspPath),
 			fmt.Sprintf("%s:/etc/hyperledger/fabric/tls", tlsPath),
 			fmt.Sprintf("%s:/var/hyperledger/production", domain),
 		},
 		ContainerName: domain,
-		Networks:      []string{
+		Networks: []string{
 			network,
 		},
 		WorkingDir: "/opt/gopath/src/github.com/hyperledger/fabric/peer",
+		Tty:        true,
 	}
 	if tls {
 		service.Environment = append(service.Environment, fmt.Sprintf("CORE_PEER_TLS_CERT_FILE=/etc/hyperledger/fabric/tls/server.crt"))

@@ -1,6 +1,6 @@
 package structure
 
-import "faber/pkg/configtx"
+import "github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/structure/configtx"
 
 const (
 	OrdererPeer    = iota

@@ -56,3 +56,15 @@ func (that *DockerYAML) ExportToFile(path string, fileName string) error {
 
 	return nil
 }
+
+func UpWithDockerComposeFileCommand(filePath string) []string {
+	return []string{
+		fmt.Sprintf("docker-compose -f %s up -d", filePath),
+	}
+}
+
+func DownWithDockerComposeFileCommand(filePath string) []string {
+	return []string{
+		fmt.Sprintf("docker-compose -f %s down", filePath),
+	}
+}

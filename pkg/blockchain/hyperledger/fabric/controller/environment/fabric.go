@@ -6,11 +6,11 @@ import (
 )
 
 func DownloadFabricBinaryFilesCommand(version, versionCA string) []string {
-	common := "wget https://github.com/hyperledger/fabric/releases/download/v%s/hyperledger-fabric-linux-amd64-%s.tar.gz"
-	ca := "wget https://github.com/hyperledger/fabric-ca/releases/download/v%s/hyperledger-fabric-ca-linux-amd64-%s.tar.gz"
+	common := "cd %s && wget https://github.com/hyperledger/fabric/releases/download/v%s/hyperledger-fabric-linux-amd64-%s.tar.gz"
+	ca := "cd %s && wget https://github.com/hyperledger/fabric-ca/releases/download/v%s/hyperledger-fabric-ca-linux-amd64-%s.tar.gz"
 	return []string{
-		fmt.Sprintf(common, version, version),
-		fmt.Sprintf(ca, versionCA, versionCA),
+		fmt.Sprintf(common, config.AssertsPath, version, version),
+		fmt.Sprintf(ca, config.AssertsPath, versionCA, versionCA),
 	}
 }
 
@@ -18,8 +18,8 @@ func OpenFabricBinaryFilesWithTarCommand(version, versionCA string) []string {
 	common := fmt.Sprintf("hyperledger-fabric-linux-amd64-%s.tar.gz)", version)
 	ca := fmt.Sprintf("hyperledger-fabric-ca-linux-amd64-%s.tar.gz", versionCA)
 	return []string{
-		fmt.Sprintf("cd %s && tar -zxvf %s && mv ./bin/* %s", config.AssertsPath, common, config.BinaryPath),
-		fmt.Sprintf("cd %s && tar -zxvf %s && mv ./bin/* %s", config.AssertsPath, ca, config.BinaryPath),
+		fmt.Sprintf("cd %s && tar -zxvf %s && mv ./bin/* %s && mv ./config/* %s", config.AssertsPath, common, config.BinaryPath, config.ConfigPath),
+		fmt.Sprintf("cd %s && tar -zxvf %s && mv ./bin/* %s && mv ./config/* %s", config.AssertsPath, ca, config.BinaryPath, config.ConfigPath),
 	}
 }
 

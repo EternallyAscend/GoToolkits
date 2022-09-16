@@ -7,8 +7,8 @@ import (
 
 func GenerateOrdererService(imageVersion string, domain string, generalPort uint, msp string, mspPath string, operationPort uint, network string, tls bool, tlsPath string, blockPath string, kafkaVerbose bool) *dockerCompose.Service {
 	service := &dockerCompose.Service{
-		Image:         fmt.Sprintf("hyperledger/fabric-orderer:%s", imageVersion),
-		Environment:   []string{
+		Image: fmt.Sprintf("hyperledger/fabric-orderer:%s", imageVersion),
+		Environment: []string{
 			"FABRIC_LOGGING_SPEC=INFO",
 			"ORDERER_GENERAL_LISTENADDRESS=0.0.0.0",
 			fmt.Sprintf("ORDERER_GENERAL_LISTENPORT=%d", generalPort),
@@ -21,22 +21,23 @@ func GenerateOrdererService(imageVersion string, domain string, generalPort uint
 			"ORDERER_KAFKA_TOPIC_REPLICATIONFACTOR=1",
 			fmt.Sprintf("ORDERER_KAFKA_VERBOSE=%v", kafkaVerbose),
 		},
-		Ports:         []string{
+		Ports: []string{
 			fmt.Sprintf("%d:%d", generalPort, generalPort),
 			fmt.Sprintf("%d:%d", operationPort, operationPort),
 		},
-		Command:       "orderer",
-		Volumes:       []string{
+		Command: "orderer",
+		Volumes: []string{
 			fmt.Sprintf("%s:/var/hyperledger/orderer/orderer.genesis.block", blockPath),
 			fmt.Sprintf("%s:/var/hyperledger/orderer/tls", tlsPath),
 			fmt.Sprintf("%s:/var/hyperledger/orderer/msp", mspPath),
 			fmt.Sprintf("%s:/var/hyperledger/production/orderer", domain),
 		},
 		ContainerName: domain,
-		Networks:      []string{
+		Networks: []string{
 			network,
 		},
-		WorkingDir:    "/opt/gopath/src/github.com/hyperledger/fabric",
+		WorkingDir: "/opt/gopath/src/github.com/hyperledger/fabric",
+		Tty:        true,
 	}
 	if tls {
 		service.Environment = append(service.Environment, fmt.Sprintf("ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key"))

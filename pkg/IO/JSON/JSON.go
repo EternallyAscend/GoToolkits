@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"os"
 )
 
 func TransferStringToJson(stringData string) (interface{}, error) {
@@ -160,4 +161,19 @@ func TestJson() {
 		print(`Name：`, val.ServerName, "\t")
 		println(`IP：`, val.ServerIP)
 	}
+}
+
+func ExportToFolderFileJson(data []byte, folder string, file string) error {
+	f, err := os.OpenFile(fmt.Sprintf("%s/%s", folder, file), os.O_RDWR|os.O_TRUNC|os.O_CREATE, 0766)
+	defer func(f *os.File) {
+		_ = f.Close()
+	}(f)
+	if nil != err {
+		return err
+	}
+	_, err = f.Write(data)
+	if nil != err {
+		return err
+	}
+	return f.Sync()
 }

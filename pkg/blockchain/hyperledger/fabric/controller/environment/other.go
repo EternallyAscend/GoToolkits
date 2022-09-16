@@ -2,7 +2,7 @@ package environment
 
 import "fmt"
 
-func EnterOrCreateFolder(path string) []string {
+func EnterWithCreateFolder(path string) []string {
 	return []string{
 		fmt.Sprintf("if [ ! -d '%s' ]; then\nmkdir %s\nfi cd %s", path, path, path),
 	}

@@ -1,8 +1,8 @@
 package configtx
 
 import (
+	"faber/pkg/file"
 	"fmt"
-	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
 	"gopkg.in/yaml.v2"
 	"log"
 )
@@ -57,7 +57,7 @@ func (that *ConfigTx) Export(folder string) {
 	if nil != err {
 		log.Fatal(err)
 	}
-	err = YAML.ExportToFolderFileYaml(data, folder, "configtx.yaml")
+	err = file.ExportYamlFile(data, folder, "configtx.yaml")
 	if nil != err {
 		log.Fatal(err)
 	}
