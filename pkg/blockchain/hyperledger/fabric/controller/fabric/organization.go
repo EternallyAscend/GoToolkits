@@ -113,19 +113,3 @@ func GenerateUserMspViaCaCommand(orderer bool, user string, pwd string, domain s
 	cmds = append(cmds, fmt.Sprintf("cp \"%sorganizations/%s/%s/msp/config.yaml\" \"%sorganizations/%s/%s/users/%s@%s/msp/config.yaml\"", getBaseFolderPath(), orgGroup, domain, getBaseFolderPath(), orgGroup, domain, user, domain))
 	return cmds
 }
-
-type CcpPeerInfo struct {
-	MspID string
-	Peers []string
-	CAs   []string
-}
-
-func GenerateOrganizationCcpCommand(orgName string, domainRoot string, caPort uint, caName string, caCert string) []string {
-	var cmds []string
-	// TODO organizations/ccp-generate.sh
-	// Json
-	cmds = append(cmds, fmt.Sprintf("echo \"{\n    \"name\": \"%s\",\n    \"version\": \"1.0.0\",\n    \"client\": {\n        \"organization\": \"%s\",\n        \"connection\": {\n            \"timeout\": {\n                \"peer\": {\n                    \"endorser\": \"300\"\n                }\n            }\n        }\n    },\n    \"organizations\": {\n        \"%s\": {\n            \"mspid\": \"%sMSP\",\n            \"peers\": [\n                \"peer0.org${ORG}.example.com\"\n            ],\n            \"certificateAuthorities\": [\n                \"ca.org${ORG}.example.com\"\n            ]\n        }\n    },\n    \"peers\": {\n        \"peer0.org${ORG}.example.com\": {\n            \"url\": \"grpcs://localhost:${P0PORT}\",\n            \"tlsCACerts\": {\n                \"pem\": \"${PEERPEM}\"\n            },\n            \"grpcOptions\": {\n                \"ssl-target-name-override\": \"peer0.org${ORG}.example.com\",\n                \"hostnameOverride\": \"peer0.org${ORG}.example.com\"\n            }\n        }\n    },\n    \"certificateAuthorities\": {\n        \"ca.org${ORG}.example.com\": {\n            \"url\": \"https://localhost:${CAPORT}\",\n            \"caName\": \"ca-org${ORG}\",\n            \"tlsCACerts\": {\n                \"pem\": [\"${CAPEM}\"]\n            },\n            \"httpOptions\": {\n                \"verify\": false\n            }\n        }\n    }\n}\n\" > ", orgName, orgName, orgName, orgName))
-	// Yaml
-	cmds = append(cmds, fmt.Sprintf(""))
-	return cmds
-}

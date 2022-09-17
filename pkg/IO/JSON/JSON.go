@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/EternallyAscend/GoToolkits/pkg/IO/file"
 	"os"
 )
 
@@ -161,6 +162,14 @@ func TestJson() {
 		print(`Name：`, val.ServerName, "\t")
 		println(`IP：`, val.ServerIP)
 	}
+}
+
+func ExportToFileJson(data interface{}, path string) error {
+	byteData, err := json.Marshal(data)
+	if nil != err {
+		return err
+	}
+	return file.CreateOrRewrite(byteData, path)
 }
 
 func ExportToFolderFileJson(data []byte, folder string, file string) error {
