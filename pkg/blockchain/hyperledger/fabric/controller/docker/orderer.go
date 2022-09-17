@@ -22,8 +22,8 @@ func GenerateOrdererService(imageVersion string, domain string, generalPort uint
 			fmt.Sprintf("ORDERER_KAFKA_VERBOSE=%v", kafkaVerbose),
 		},
 		Ports: []string{
-			fmt.Sprintf("%d:%d", generalPort, generalPort),
-			fmt.Sprintf("%d:%d", operationPort, operationPort),
+			fmt.Sprintf("\"%d:%d\"", generalPort, generalPort),
+			fmt.Sprintf("\"%d:%d\"", operationPort, operationPort),
 		},
 		Command: "orderer",
 		Volumes: []string{

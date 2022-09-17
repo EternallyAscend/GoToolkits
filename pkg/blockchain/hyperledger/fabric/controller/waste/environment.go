@@ -1,13 +1,14 @@
-package controller
+package waste
 
 import (
+	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller"
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ssh"
 	"log"
 )
 
 func InstallEnvironment(target *ssh.IPv4Client) bool {
-	return ExecuteControllerCommand(target, installGolang("1.19", "linux", "amd64"))
+	return controller.ExecuteControllerCommand(target, installGolang("1.19", "linux", "amd64"))
 }
 
 func CheckEnvironment(target *ssh.IPv4Client) bool {
@@ -44,5 +45,5 @@ func PullDockerImages(target *ssh.IPv4Client) bool {
 }
 
 func PullFabricBinaryFiles(target *ssh.IPv4Client) bool {
-	return ExecuteControllerParallelCommand(target, pullFabricBinaryFilesCommand("2.2.0", "1.4.8"))
+	return controller.ExecuteControllerParallelCommand(target, pullFabricBinaryFilesCommand("2.2.0", "1.4.8"))
 }

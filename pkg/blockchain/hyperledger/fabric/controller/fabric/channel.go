@@ -58,6 +58,7 @@ func SetGlobals(orderer bool, org string, corePeerAddress string, corePeerPort u
 
 func JoinChannelCommand(channelName string) []string {
 	var cmds []string
+	// TODO config folder
 	cmds = append(cmds, fmt.Sprintf("peer channel join -b %schannel-artifacts/%s.block", getBaseFolderPath(), channelName))
 	return cmds
 }

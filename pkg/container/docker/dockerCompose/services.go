@@ -50,7 +50,7 @@ func (that *Service) AddEnvironments(envs []string) *Service {
 }
 
 func (that *Service) AddPort(from uint, to uint) *Service {
-	that.Ports = append(that.Ports, fmt.Sprintf("%d:%d", from, to))
+	that.Ports = append(that.Ports, fmt.Sprintf("\"%d:%d\"", from, to))
 	return that
 }
 

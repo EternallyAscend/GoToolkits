@@ -25,9 +25,9 @@ func GeneratePeerService(imageVersion string, domain string, network string, tls
 			fmt.Sprintf("CORE_OPERATIONS_LISTENADDRESS=%s:%d", domain, operationsPort),
 		},
 		Ports: []string{
-			fmt.Sprintf("%d:%d", peerPort, peerPort),
-			fmt.Sprintf("%d:%d", chaincodePort, chaincodePort),
-			fmt.Sprintf("%d:%d", operationsPort, operationsPort),
+			fmt.Sprintf("\"%d:%d\"", peerPort, peerPort),
+			fmt.Sprintf("\"%d:%d\"", chaincodePort, chaincodePort),
+			fmt.Sprintf("\"%d:%d\"", operationsPort, operationsPort),
 		},
 		Command: "peer node start",
 		Volumes: []string{

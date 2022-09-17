@@ -21,9 +21,9 @@ func generateRandom() *ristretto.Scalar {
 
 // DealerUnit Pederson承诺处理单元
 type DealerUnit struct {
-	G *ristretto.Point
-	H *ristretto.Point
-	R *ristretto.Scalar
+	G           *ristretto.Point
+	H           *ristretto.Point
+	R           *ristretto.Scalar
 	CommitPoint *ristretto.Point
 }
 
@@ -77,7 +77,6 @@ func (that *DealerUnit) Open(content []byte) bool {
 }
 
 func (that *DealerUnit) CopyParams() *DealerUnit {
-	// TODO Test using that.G, that.H directly.
 	//g := &ristretto.Point{}
 	//h := &ristretto.Point{}
 	//g.Set(that.G)
@@ -103,15 +102,15 @@ func (that *DealerUnit) TransferToYamlByte() ([]byte, error) {
 // https://www.codeleading.com/article/59343262039/
 
 type VerifiableMessageUint struct {
-	R *ristretto.Scalar
+	R           *ristretto.Scalar
 	CommitPoint *ristretto.Point
 }
 
 // VerifiableMessage 可验证消息，VP中的单条Verifiable Credentials
 type VerifiableMessage struct {
 	Dealer *DealerUnit
-	Data [][]byte
-	Units []*VerifiableMessageUint
+	Data   [][]byte
+	Units  []*VerifiableMessageUint
 }
 
 // GenerateVerifiableMessage 生成一个空的可验证消息，含有公钥
@@ -201,7 +200,7 @@ func (that *VerifiableMessage) ConfirmMessage(data [][]byte) *VerifiableMessage 
 	// c = xG + rH
 	that.Dealer.CommitPoint.Add(that.Dealer.CommitPoint, &tempPoint)
 
- 	return that
+	return that
 }
 
 // OpenLine 打开提供的一行数据并验证正确性
@@ -209,7 +208,7 @@ func (that *VerifiableMessage) OpenLine(line uint) bool {
 	if len(that.Units) != len(that.Data) {
 		return false
 	}
- 	if int(line) > len(that.Data) {
+	if int(line) > len(that.Data) {
 		return false
 	}
 	if nil == that.Data[line] {
@@ -285,14 +284,14 @@ func (that *VerifiableMessage) ExportMessagesAsString() []string {
 }
 
 type VerifiableDataUnit struct {
-	Dealer *DealerUnit
+	Dealer  *DealerUnit
 	Encrypt bool
-	Data []byte
+	Data    []byte
 }
 
 type VerifiableData struct {
-	Units []*VerifiableDataUnit
-	DealerUint *DealerUnit
+	Units        []*VerifiableDataUnit
+	DealerUint   *DealerUnit
 	VerifierData [][]byte
 }
 

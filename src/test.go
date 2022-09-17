@@ -6,6 +6,7 @@ import (
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller"
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/docker"
+	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/waste"
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"github.com/EternallyAscend/GoToolkits/pkg/container/docker/dockerCompose"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ssh"
@@ -37,9 +38,9 @@ func main() {
 	if nil != err {
 		fmt.Println(err)
 	}
-	bools := controller.InstallEnvironment(sshClient)
+	bools := waste.InstallEnvironment(sshClient)
 	fmt.Println(bools)
-	bools = controller.CheckEnvironment(sshClient)
+	bools = waste.CheckEnvironment(sshClient)
 	fmt.Println(bools)
 	//bools = controller.PullDockerImages(sshClient)
 	//fmt.Println(bools)
