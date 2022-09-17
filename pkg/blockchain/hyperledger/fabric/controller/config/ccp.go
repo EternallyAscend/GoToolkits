@@ -68,13 +68,13 @@ type CCP struct {
 	CertificateAuthorities map[string]*CcpCertificateAuthorities `json:"certificateAuthorities" yaml:"certificateAuthorities"`
 }
 
-func GenerateEmptyCcp(name string, version string, orgName string) *CCP {
+func GenerateEmptyCcp(ccpName string, ccpVersion string, orgName string, endorser uint) *CCP { // Endorser 默认 300
 	return &CCP{
-		Name:    name,
-		Version: version,
+		Name:    ccpName,
+		Version: ccpVersion,
 		Client: &CcpClient{
 			Organization: orgName,
-			Connection:   &CcpClientConnection{Timeout: &CcpClientConnectionPeer{Peer: &CcpClientConnectionPeerEndorser{Endorser: "300"}}},
+			Connection:   &CcpClientConnection{Timeout: &CcpClientConnectionPeer{Peer: &CcpClientConnectionPeerEndorser{Endorser: fmt.Sprintf("%d", endorser)}}},
 		},
 		Organizations: map[string]*CcpOrganization{
 			orgName: {
@@ -97,16 +97,16 @@ func (that *CCP) AddPeer(peerName string, orgName string, domainRoot string, gRp
 	}
 }
 
-func (that *CCP) AddCa(peerName string, orgName string, domainRoot string, gRpcPort uint, caPem string, verify bool) {
+func (that *CCP) AddCa(peerName string, orgName string, domainRoot string, gRpcPort uint, caPemPath string, verifyHttp bool) {
 	domain := fmt.Sprintf("%s.%s.%s", peerName, orgName, domainRoot)
 	that.Organizations[orgName].CertificateAuthorities = append(that.Organizations[orgName].CertificateAuthorities, domain)
 	that.CertificateAuthorities[domain] = &CcpCertificateAuthorities{
 		Url:    fmt.Sprintf("https://%s:%d", domain, gRpcPort),
-		CaName: fmt.Sprintf("ca%s%s", peerName, orgName),
+		CaName: fmt.Sprintf("ca-%s-%s", peerName, orgName),
 		TlsCaCerts: &CcpCaTlsCaCert{Pem: []string{
-			caPem,
+			caPemPath,
 		}},
-		HttpOptions: &CcpCaHttpOptions{Verify: verify},
+		HttpOptions: &CcpCaHttpOptions{Verify: verifyHttp},
 	}
 }
 

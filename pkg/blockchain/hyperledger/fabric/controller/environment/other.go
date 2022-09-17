@@ -25,3 +25,9 @@ func InstallBuildEssentialCommand() []string {
 		"apt-get -y install build-essential",
 	}
 }
+
+func SetHosts() []string {
+	var cmds []string
+	// TODO Set Hyperledger Hosts.
+	return cmds
+}

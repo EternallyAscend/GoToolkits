@@ -108,7 +108,7 @@ func GeneratePeerTlsCertCommand(orderer bool, peer string, pwd string, domain st
 func GenerateUserMspViaCaCommand(orderer bool, user string, pwd string, domain string, port uint, caName string, caOrg string) []string {
 	orgGroup := getOrgSubPathByOrderer(orderer)
 	var cmds []string
-	cmds = append(cmds, fmt.Sprintf("fabric-ca-client enroll -u https://%s:%s@%s:%d --caname ca-%s -M \"%sorganizations/%s/%S/users/%s@o%s/msp\" --tls.certfiles \"%sorganizations/fabric-ca/%s/ca-cert.pem\"", user, pwd, domain, port, caName, getBaseFolderPath(), orgGroup, domain, user, domain, getBaseFolderPath(), caOrg))
+	cmds = append(cmds, fmt.Sprintf("fabric-ca-client enroll -u https://%s:%s@%s:%d --caname ca-%s -M \"%sorganizations/%s/%S/users/%s@%s/msp\" --tls.certfiles \"%sorganizations/fabric-ca/%s/ca-cert.pem\"", user, pwd, domain, port, caName, getBaseFolderPath(), orgGroup, domain, user, domain, getBaseFolderPath(), caOrg))
 
 	cmds = append(cmds, fmt.Sprintf("cp \"%sorganizations/%s/%s/msp/config.yaml\" \"%sorganizations/%s/%s/users/%s@%s/msp/config.yaml\"", getBaseFolderPath(), orgGroup, domain, getBaseFolderPath(), orgGroup, domain, user, domain))
 	return cmds

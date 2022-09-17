@@ -1,4 +1,7 @@
 # Faber
+url/containerName peerName.orgName.domainRoot:port
+MspID %sMSP orgName
+caName ca-%s-%s peerName orgName
 
 ## Faber 环境配置
 
