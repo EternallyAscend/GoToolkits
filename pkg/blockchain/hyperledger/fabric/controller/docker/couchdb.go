@@ -5,9 +5,9 @@ import (
 	"github.com/EternallyAscend/GoToolkits/pkg/container/docker/dockerCompose"
 )
 
-func GenerateCouchdbCommand(dbPeerName, domainRoot, user, pwd string, port uint) *dockerCompose.Service {
+func GenerateCouchdbCommand(dbPeerName, orgName, domainRoot, user, pwd string, port uint) *dockerCompose.Service {
 	return &dockerCompose.Service{
-		ContainerName: fmt.Sprintf("%s.%s", dbPeerName, domainRoot),
+		ContainerName: fmt.Sprintf("%s.%s.%s", dbPeerName, orgName, domainRoot),
 		Image:         "couchdb:3.1.1",
 		Environment: []string{
 			fmt.Sprintf("COUCHDB_USER=%s", user),

@@ -82,20 +82,22 @@ func GenerateDefaultOrdererEtcd(capabilities *Capabilities) *OrdererEtcd {
 	}
 }
 
-func (that *OrdererEtcd) AddConsenter(domain string, port uint, ClientTLSCertPath string, ServerTLSCertPath string) {
+func (that *OrdererEtcd) AddConsenter(peerName string, orgName string, domainRoot string, port uint, ClientTLSCertPath string, ServerTLSCertPath string) {
 	that.EtcdRaft.Consenters = append(that.EtcdRaft.Consenters, &OrdererEtcdRaftConsenters{
-		Host:          domain,
+		Host:          fmt.Sprintf("%s.%s.%s", peerName, orgName, domainRoot),
 		Port:          port,
 		ClientTLSCert: ClientTLSCertPath,
 		ServerTLSCert: ServerTLSCertPath,
 	})
 }
 
-func (that *OrdererEtcd) AddOrdererAndConsenter(domain string, port uint, ClientTLSCertPath string, ServerTLSCertPath string) {
-	that.AddOrderer(domain, port)
-	that.AddConsenter(domain, port, ClientTLSCertPath, ServerTLSCertPath)
+func (that *OrdererEtcd) AddOrdererAndConsenter(peerName string, orgName string, domainRoot string, port uint, ClientTLSCertPath string, ServerTLSCertPath string) {
+
+	that.AddOrderer(peerName, orgName, domainRoot, port)
+	that.AddConsenter(peerName, orgName, domainRoot, port, ClientTLSCertPath, ServerTLSCertPath)
 }
 
-func (that *OrdererEtcd) AddOrderer(domain string, port uint) {
+func (that *OrdererEtcd) AddOrderer(peerName string, orgName string, domainRoot string, port uint) {
+	domain := fmt.Sprintf("%s.%s.%s", peerName, orgName, domainRoot)
 	that.Addresses = append(that.Addresses, fmt.Sprintf("%s:%d", domain, port))
 }
