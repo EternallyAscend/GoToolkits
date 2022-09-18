@@ -29,7 +29,8 @@ func GenerateDefaultProfilesChannelApplication(application *Application, orgs []
 }
 
 type SystemChannelConsortium struct {
-	// TODO
+	// TODO @EternallyAscend
+	Organization []*Organization `yaml:"Organization"`
 }
 
 type ProfilesChannelEtcd struct {
@@ -52,4 +53,20 @@ func GenerateDefaultProfilesChannelWithEtcdOrderer(consortium string, channel *C
 		Application: GenerateDefaultProfilesChannelApplication(application, applicationOrgs, applicationCapabilities),
 	}
 	return profilesChannel
+}
+
+func GenerateSystemProfilesChannelWithEtcdOrderer(channel *Channel, orderer *OrdererEtcd, ordererOrgs []*Organization, ordererCapabilities *Capabilities,
+	application *Application, applicationOrgs []*Organization, applicationCapabilities *Capabilities,
+) *ProfilesChannelEtcd {
+	return &ProfilesChannelEtcd{
+		Consortium:  "SystemChannel",
+		Consortiums: map[string]*SystemChannelConsortium{},
+		Channel:     channel,
+		Orderer:     GenerateDefaultProfilesChannelOrdererEtcd(orderer, ordererOrgs, ordererCapabilities),
+		Application: GenerateDefaultProfilesChannelApplication(application, applicationOrgs, applicationCapabilities),
+	}
+}
+
+func AppendChannelIntoSystemChannel(configtx *ConfigTx, channelName string, organizations []*Organization) {
+	configtx.Profiles["SystemChannel"].Consortiums[channelName].Organization = organizations
 }
