@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/config"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/JSON"
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller"
@@ -87,7 +89,6 @@ func (that *Config) FillConfigtx() {
 	for i := range that.Channels {
 		that.configtx.AddChannel(that.Channels[i].Name, that.Channels[i].Consortium)
 	}
-
 	for i := range that.Organizations {
 		// 加入组织部分数据
 		org := configtx.GenerateEmptyOrganization(that.Organizations[i].Name, controller.GenerateMSPID(that.Organizations[i].Name))
@@ -109,5 +110,16 @@ func (that *Config) FillConfigtx() {
 				serverTLSCertPath,
 			)
 		}
+	}
+}
+
+func (that *Config) FillCryptoConfig() {
+	for i := range that.Organizations {
+		user := 0
+		for j := range that.Organizations[i].Peers {
+			user += len(that.Organizations[i].Peers[j].PeerUser)
+		}
+		config.GenerateDefaultPeerCryptoConfig(that.Organizations[i].Name, that.Organizations[i].Domain, uint(len(that.Organizations[i].Peers)), uint(user))
+		config.GenerateDefaultOrdererCryptoConfig(that.Organizations[i].Name, that.Organizations[i].Domain)
 	}
 }
