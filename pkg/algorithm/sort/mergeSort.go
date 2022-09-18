@@ -18,9 +18,9 @@ func mergeSortIntCore(data []int, start int, end int) []int {
 		return data
 	}
 	middle := (start + end) >> 1
-	//waitGroup := sync.WaitGroup{}
-	//waitGroup.Add(2)
-	//go func() {
+	// waitGroup := sync.WaitGroup{}
+	// waitGroup.Add(2)
+	// go func() {
 	mergeSortIntCore(data, start, middle)
 	//waitGroup.Done()
 	//}()
@@ -32,7 +32,7 @@ func mergeSortIntCore(data []int, start int, end int) []int {
 	rightCursor := middle
 	resultCursor := 0
 	result := make([]int, end-start)
-	//waitGroup.Wait()
+	// waitGroup.Wait()
 	for leftCursor < middle && rightCursor < end {
 		if data[leftCursor] > data[rightCursor] {
 			result[resultCursor] = data[rightCursor]

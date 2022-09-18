@@ -39,7 +39,7 @@ func GenerateDefaultApplicationPolicies() *ApplicationPolicies {
 }
 
 type Application struct {
-	//Organizations interface{}              `yaml:"Organizations"`
+	// Organizations interface{}              `yaml:"Organizations"`
 	Polices      *ApplicationPolicies `yaml:"Polices"`
 	Capabilities *Capabilities        `yaml:"Capabilities"`
 }

@@ -1,13 +1,14 @@
 package configtx
 
 import (
+	"log"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
 	"gopkg.in/yaml.v2"
-	"log"
 )
 
 type ConfigTx struct {
-	//Organizations []map[string]Organizations `yaml:"Organizations"`
+	// Organizations []map[string]Organizations `yaml:"Organizations"`
 	Organizations []*Organization                 `yaml:"Organizations"`
 	Capabilities  *Capabilities                   `yaml:"Capabilities"`
 	Application   *Application                    `yaml:"Application"`

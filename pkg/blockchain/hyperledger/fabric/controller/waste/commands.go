@@ -2,6 +2,7 @@ package waste
 
 import (
 	"fmt"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
 )
 

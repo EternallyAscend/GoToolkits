@@ -2,10 +2,11 @@ package request
 
 import (
 	"errors"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/https/header"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/https/response"
 	"net/http"
 	"net/url"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/network/https/header"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/https/response"
 )
 
 func CheckNeedArgs(values url.Values, args ...string) error {

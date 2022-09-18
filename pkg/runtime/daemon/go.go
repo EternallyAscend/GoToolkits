@@ -8,7 +8,6 @@ func GoDaemon() {
 	defer func(context *goDaemon.Context) {
 		err := context.Release()
 		if err != nil {
-
 		}
 	}(context)
 }

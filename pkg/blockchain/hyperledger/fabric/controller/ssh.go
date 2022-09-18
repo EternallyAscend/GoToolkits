@@ -1,9 +1,10 @@
 package controller
 
 import (
+	"log"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ssh"
-	"log"
 )
 
 func ExecuteControllerCommand(target *ssh.IPv4Client, commands []*command.Command) bool {

@@ -1,4 +1,6 @@
 package fabric
 
-const Crypto = "cryptogen"
-const MaxRetry = 5
+const (
+	Crypto   = "cryptogen"
+	MaxRetry = 5
+)

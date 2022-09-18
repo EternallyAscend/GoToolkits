@@ -2,8 +2,9 @@ package gRPC
 
 import (
 	"fmt"
-	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"log"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/command"
 )
 
 // go get google.golang.org/grpc

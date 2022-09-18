@@ -2,6 +2,7 @@ package fabric
 
 import (
 	"fmt"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/config"
 )
 
@@ -52,7 +53,6 @@ func GenerateMspConfigYamlCommand(orderer bool, domain string, port uint, caOrg 
 }
 
 func GenerateCopyCertFileCommand(orderer bool, domain string, caOrg string) []string {
-
 	orgGroup := getOrgSubPathByOrderer(orderer)
 	var cmds []string
 
