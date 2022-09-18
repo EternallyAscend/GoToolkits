@@ -1,7 +1,6 @@
 package configtx
 
 import (
-	"fmt"
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
 	"gopkg.in/yaml.v2"
 	"log"
@@ -19,25 +18,6 @@ type ConfigTx struct {
 
 func GenerateConfigTx() *ConfigTx {
 	configtx := &ConfigTx{
-		//Organizations: []map[string]Organizations{
-		//	{
-		//		"Name": {
-		//			Name:             "Default",
-		//			ID:               "Default",
-		//			MSPDir:           "MSP",
-		//			Policies:         *GenerateDefaultPolicies("Default"),
-		//			OrdererEndpoints: []string{
-		//				"orderer.default.com:7051",
-		//			},
-		//			AnchorPeers:      []OrganizationAnchorPeer{
-		//				{
-		//					Host: "peer.ddefault.com",
-		//					Port: "7251",
-		//				},
-		//			},
-		//		},
-		//	},
-		//},
 		Organizations: []*Organization{},
 		Capabilities:  GenerateDefaultCapabilities(),
 		Profiles:      map[string]*ProfilesChannelEtcd{},
@@ -46,8 +26,6 @@ func GenerateConfigTx() *ConfigTx {
 	configtx.Application = GenerateDefaultApplication(configtx.Capabilities)
 	configtx.Orderer = GenerateDefaultOrdererEtcd(configtx.Capabilities)
 	configtx.Channel = GenerateDefaultChannel(configtx.Capabilities)
-
-	configtx.Example()
 
 	return configtx
 }
@@ -63,8 +41,8 @@ func (that *ConfigTx) Export(folder string) {
 	}
 }
 
-func (that *ConfigTx) CreateOrganization(org string, mspPath string) *Organization {
-	organization := GenerateEmptyOrganization(org, mspPath)
+func (that *ConfigTx) CreateOrganization(orgName string, mspPath string) *Organization {
+	organization := GenerateEmptyOrganization(orgName, mspPath)
 	that.AddOrganization(organization)
 	return organization
 }
@@ -73,16 +51,18 @@ func (that *ConfigTx) AddOrganization(org *Organization) {
 	that.Organizations = append(that.Organizations, org)
 }
 
-func (that *ConfigTx) FindOrganization(org string) *Organization {
+func (that *ConfigTx) FindOrganization(orgName string) *Organization {
 	for i := range that.Organizations {
-		println(that.Organizations[i].Name)
+		if that.Organizations[i].Name == orgName {
+			return that.Organizations[i]
+		}
 	}
 	return nil
 }
 
-func (that *ConfigTx) AddOrdererToOrg(org *Organization, domain string, port uint, ClientTLSCertPath string, ServerTLSCertPath string) {
-	org.AddOrderer(fmt.Sprintf("%s:%d", domain, port))
-	that.Orderer.AddOrdererAndConsenter(domain, port, ClientTLSCertPath, ServerTLSCertPath)
+func (that *ConfigTx) AddOrdererToOrg(org *Organization, peerName string, orgName string, domainRoot string, port uint, ClientTLSCertPath string, ServerTLSCertPath string) {
+	org.AddOrderer(peerName, orgName, domainRoot, port)
+	that.Orderer.AddOrdererAndConsenter(peerName, orgName, domainRoot, port, ClientTLSCertPath, ServerTLSCertPath)
 }
 
 func (that *ConfigTx) AddChannel(name string, consortium string) {
@@ -93,31 +73,4 @@ func (that *ConfigTx) AddChannel(name string, consortium string) {
 		that.Orderer, that.Organizations, that.Capabilities,
 		that.Application, that.Organizations, that.Capabilities)
 	that.Profiles[name] = channel
-}
-
-func (that *ConfigTx) Example() {
-	//that.Organizations = append(that.Organizations,
-	//	Organization{
-	//		Name:     "default",
-	//		ID:       "default",
-	//		MSPDir:   "defaultMSP",
-	//		Policies: *GenerateDefaultPolicies("default"),
-	//		OrdererEndpoints: []string{
-	//			"orderer.default.com:7051",
-	//		},
-	//		AnchorPeers: []OrganizationAnchorPeer{
-	//			{
-	//				Host: "peer.default.com",
-	//				Port: 7251,
-	//			},
-	//		},
-	//	})
-	defaultOrg := that.CreateOrganization("default", "defaultMSP")
-	//defaultOrg := GenerateEmptyOrganization("default", "defaultMSP")
-	//that.Organizations = append(that.Organizations, defaultOrg)
-	that.FindOrganization("")
-	defaultOrg.AddAnchorPeer("peer.default.com", 7251)
-	that.AddOrdererToOrg(defaultOrg, "orderer.default.com", 7051, "", "")
-
-	that.AddChannel("defaultChannel", "defaultConsortium")
 }

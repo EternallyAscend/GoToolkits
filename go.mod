@@ -15,6 +15,7 @@ require (
 	github.com/marcusolsson/tui-go v0.4.0
 	github.com/sevlyar/go-daemon v0.1.5
 	golang.org/x/crypto v0.0.0-20220408190544-5352b0902921
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (
@@ -77,6 +78,5 @@ require (
 	google.golang.org/grpc v1.29.1 // indirect
 	google.golang.org/protobuf v1.23.0 // indirect
 	gopkg.in/ini.v1 v1.56.0 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
 )

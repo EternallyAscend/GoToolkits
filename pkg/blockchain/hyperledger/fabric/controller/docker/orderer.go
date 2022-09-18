@@ -5,7 +5,7 @@ import (
 	"github.com/EternallyAscend/GoToolkits/pkg/container/docker/dockerCompose"
 )
 
-func GenerateOrdererService(imageVersion string, domain string, generalPort uint, msp string, mspPath string, operationPort uint, network string, tls bool, tlsPath string, blockPath string, kafkaVerbose bool) *dockerCompose.Service {
+func GenerateOrdererService(imageVersion string, peerName string, orgName string, domainRoot string, generalPort uint, msp string, mspPath string, operationPort uint, network string, tls bool, tlsPath string, blockPath string, kafkaVerbose bool) *dockerCompose.Service {
 	service := &dockerCompose.Service{
 		Image: fmt.Sprintf("hyperledger/fabric-orderer:%s", imageVersion),
 		Environment: []string{
@@ -16,7 +16,7 @@ func GenerateOrdererService(imageVersion string, domain string, generalPort uint
 			"ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block",
 			fmt.Sprintf("ORDERER_GENERAL_LOCALMSPID=%s", msp),
 			"ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp",
-			fmt.Sprintf("ORDERER_OPERATIONS_LISTENADDRESS=%s:%d", domain, operationPort),
+			fmt.Sprintf("ORDERER_OPERATIONS_LISTENADDRESS=%s.%s.%s:%d", peerName, orgName, domainRoot, operationPort),
 			fmt.Sprintf("ORDERER_GENERAL_TLS_ENABLED=%v", tls),
 			"ORDERER_KAFKA_TOPIC_REPLICATIONFACTOR=1",
 			fmt.Sprintf("ORDERER_KAFKA_VERBOSE=%v", kafkaVerbose),
@@ -30,9 +30,9 @@ func GenerateOrdererService(imageVersion string, domain string, generalPort uint
 			fmt.Sprintf("%s:/var/hyperledger/orderer/orderer.genesis.block", blockPath),
 			fmt.Sprintf("%s:/var/hyperledger/orderer/tls", tlsPath),
 			fmt.Sprintf("%s:/var/hyperledger/orderer/msp", mspPath),
-			fmt.Sprintf("%s:/var/hyperledger/production/orderer", domain),
+			fmt.Sprintf("%s.%s.%s:/var/hyperledger/production/orderer", peerName, orgName, domainRoot),
 		},
-		ContainerName: domain,
+		ContainerName: fmt.Sprintf("%s.%s.%s", peerName, orgName, domainRoot),
 		Networks: []string{
 			network,
 		},

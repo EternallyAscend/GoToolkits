@@ -13,19 +13,19 @@ type OrganizationPolicies struct {
 	Admins  *OrganizationsPoliciesRole `yaml:"Admins"`
 }
 
-func GenerateDefaultPolicies(org string) *OrganizationPolicies {
+func GenerateDefaultPolicies(orgName string) *OrganizationPolicies {
 	return &OrganizationPolicies{
 		Readers: &OrganizationsPoliciesRole{
 			Type: "Signature",
-			Rule: fmt.Sprintf("OR('%s.member')", org),
+			Rule: fmt.Sprintf("OR('%sMSP.member')", orgName),
 		},
 		Writers: &OrganizationsPoliciesRole{
 			Type: "Signature",
-			Rule: fmt.Sprintf("OR('%s.member')", org),
+			Rule: fmt.Sprintf("OR('%sMSP.member')", orgName),
 		},
 		Admins: &OrganizationsPoliciesRole{
 			Type: "Signature",
-			Rule: fmt.Sprintf("OR('%s.admin')", org),
+			Rule: fmt.Sprintf("OR('%sMAp.admin')", orgName),
 		},
 	}
 }
@@ -44,24 +44,25 @@ type Organization struct {
 	AnchorPeers      []*OrganizationAnchorPeer `yaml:"AnchorPeers"`      // 锚节点 对外代表本组织通信
 }
 
-func GenerateEmptyOrganization(name string, msp string) *Organization {
+func GenerateEmptyOrganization(orgName string, msp string) *Organization {
 	return &Organization{
-		Name:             name,
-		ID:               name,
+		Name:             orgName,
+		ID:               orgName,
 		MSPDir:           msp,
-		Policies:         GenerateDefaultPolicies(name),
+		Policies:         GenerateDefaultPolicies(orgName),
 		OrdererEndpoints: []string{},
 		AnchorPeers:      []*OrganizationAnchorPeer{},
 	}
 }
 
-func (that *Organization) AddOrderer(orderer string) {
+func (that *Organization) AddOrderer(peerName string, orgName string, domainRoot string, port uint) {
+	orderer := fmt.Sprintf("%s.%s.%s:%d", peerName, orgName, domainRoot, port)
 	that.OrdererEndpoints = append(that.OrdererEndpoints, orderer)
 }
 
-func (that *Organization) AddAnchorPeer(host string, port uint) {
+func (that *Organization) AddAnchorPeer(peerName string, orgName string, domainRoot string, port uint) {
 	that.AnchorPeers = append(that.AnchorPeers, &OrganizationAnchorPeer{
-		Host: host,
+		Host: fmt.Sprintf("%s.%s.%s", peerName, orgName, domainRoot),
 		Port: port,
 	})
 }

@@ -49,9 +49,9 @@ type PeerCryptoConfig struct {
 	Users         *PeerCryptoConfigUsers    `yaml:"Users"`
 }
 
-func GenerateDefaultPeerCryptoConfig(name, domainRoot string, count, users uint) *PeerCryptoConfig {
+func GenerateDefaultPeerCryptoConfig(orgName, domainRoot string, count, users uint) *PeerCryptoConfig {
 	return &PeerCryptoConfig{
-		Name:          name,
+		Name:          orgName,
 		Domain:        domainRoot,
 		EnableNodeOUs: true,
 		Template: &PeerCryptoConfigTemplate{

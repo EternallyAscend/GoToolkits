@@ -5,7 +5,7 @@ import (
 	"github.com/EternallyAscend/GoToolkits/pkg/container/docker/dockerCompose"
 )
 
-func GeneratePeerService(imageVersion string, domain string, network string, tls bool, tlsPath string, profile bool, msp string, mspPath string, peerPort uint, chaincodePort uint, operationsPort uint) *dockerCompose.Service {
+func GeneratePeerService(imageVersion string, peerName string, orgName string, domainRoot string, network string, tls bool, tlsPath string, profile bool, msp string, mspPath string, peerPort uint, chaincodePort uint, operationsPort uint) *dockerCompose.Service {
 	service := &dockerCompose.Service{
 		Image: fmt.Sprintf("hyperledger/fabric-peer:%s", imageVersion),
 		Environment: []string{
@@ -14,15 +14,15 @@ func GeneratePeerService(imageVersion string, domain string, network string, tls
 			"FABRIC_LOGGING_SPEC=INFO",
 			fmt.Sprintf("CORE_PEER_TLS_ENABLED=%v", tls),
 			fmt.Sprintf("CORE_PEER_PROFILE_ENABLED=%v", profile),
-			fmt.Sprintf("CORE_PEER_ID=%s", domain),
-			fmt.Sprintf("CORE_PEER_ADDRESS=%s:%d", domain, peerPort),
+			fmt.Sprintf("CORE_PEER_ID=%s.%s.%s", peerName, orgName, domainRoot),
+			fmt.Sprintf("CORE_PEER_ADDRESS=%s.%s.%s:%d", peerName, orgName, domainRoot, peerPort),
 			fmt.Sprintf("CORE_PEER_LISTENADDRESS=0.0.0.0:%d", peerPort),
-			fmt.Sprintf("CORE_PEER_CHAINCODEADDRESS=%s:%d", domain, chaincodePort),
+			fmt.Sprintf("CORE_PEER_CHAINCODEADDRESS=%s.%s.%s:%d", peerName, orgName, domainRoot, chaincodePort),
 			fmt.Sprintf("CORE_PEER_CHAINCODELISTENADDRESS=0.0.0.0:%d", chaincodePort),
-			fmt.Sprintf("CORE_PEER_GOSSIP_BOOTSTRAP=%s:%d", domain, peerPort),
-			fmt.Sprintf("CORE_PEER_GOSSIP_EXTERNALENDPOINT=%s:%d", domain, peerPort),
+			fmt.Sprintf("CORE_PEER_GOSSIP_BOOTSTRAP=%s.%s.%s:%d", peerName, orgName, domainRoot, peerPort),
+			fmt.Sprintf("CORE_PEER_GOSSIP_EXTERNALENDPOINT=%s:%d", peerName, orgName, domainRoot, peerPort),
 			fmt.Sprintf("CORE_PEER_LOCALMSPID=%s", msp),
-			fmt.Sprintf("CORE_OPERATIONS_LISTENADDRESS=%s:%d", domain, operationsPort),
+			fmt.Sprintf("CORE_OPERATIONS_LISTENADDRESS=%s.%s.%s:%d", peerName, orgName, domainRoot, operationsPort),
 		},
 		Ports: []string{
 			fmt.Sprintf("\"%d:%d\"", peerPort, peerPort),
@@ -34,9 +34,9 @@ func GeneratePeerService(imageVersion string, domain string, network string, tls
 			"/var/run/docker.sock:/host/var/run/docker.sock",
 			fmt.Sprintf("%s:/etc/hyperledger/fabric/msp", mspPath),
 			fmt.Sprintf("%s:/etc/hyperledger/fabric/tls", tlsPath),
-			fmt.Sprintf("%s:/var/hyperledger/production", domain),
+			fmt.Sprintf("%s.%s.%s:/var/hyperledger/production", peerName, orgName, domainRoot),
 		},
-		ContainerName: domain,
+		ContainerName: fmt.Sprintf("%s.%s.%s", peerName, orgName, domainRoot),
 		Networks: []string{
 			network,
 		},

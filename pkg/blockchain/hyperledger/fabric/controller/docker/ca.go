@@ -5,12 +5,12 @@ import (
 	"github.com/EternallyAscend/GoToolkits/pkg/container/docker/dockerCompose"
 )
 
-func GenerateCaServices(imageVersion string, name string, tls bool, serverPort uint, listenPort uint, volume string, user string, password string, networks ...string) *dockerCompose.Service {
+func GenerateCaServices(imageVersion string, peerName string, orgName string, domainRoot string, tls bool, serverPort uint, listenPort uint, volume string, user string, password string, networks ...string) *dockerCompose.Service {
 	return &dockerCompose.Service{
 		Image: fmt.Sprintf("hyperledger/fabric-ca:%s", imageVersion),
 		Environment: []string{
 			"FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server",
-			fmt.Sprintf("FABRIC_CA_SERVER_CA_NAME=%s", name),
+			fmt.Sprintf("FABRIC_CA_SERVER_CA_NAME=ca-%s-%s", peerName, orgName),
 			fmt.Sprintf("FABRIC_CA_SERVER_TLS_ENABLED=%v", tls),
 			fmt.Sprintf("FABRIC_CA_SERVER_PORT=%d", serverPort),
 			fmt.Sprintf("FABRIC_CA_SERVER_OPERATIONS_LISTENADDRESS=0.0.0.0:%d", listenPort),
@@ -23,7 +23,7 @@ func GenerateCaServices(imageVersion string, name string, tls bool, serverPort u
 		Volumes: []string{
 			fmt.Sprintf("%s:/etc/hyperledger/fabric-ca-server", volume),
 		},
-		ContainerName: name,
+		ContainerName: fmt.Sprintf("%s.%s.%s", peerName, orgName, domainRoot),
 		Networks:      networks,
 		Tty:           true,
 	}
