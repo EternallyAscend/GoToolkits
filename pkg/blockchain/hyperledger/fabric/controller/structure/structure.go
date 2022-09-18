@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/JSON"
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
+	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller"
+	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/config/configtx"
 	"gopkg.in/yaml.v2"
 	"log"
 )
@@ -12,6 +14,7 @@ type Config struct {
 	Organizations []*Organization `yaml:"organizations" json:"organizations"`
 	Channels      []*Channel      `yaml:"channels" json:"channels"`
 	Applications  []*Application  `yaml:"applications" json:"applications"`
+	configtx      *configtx.ConfigTx
 }
 
 func (that *Config) Export(path string, name string, yamlOut bool, jsonOut bool) {
@@ -73,4 +76,36 @@ func (that *Config) AddCaToOrg(org *Organization, peerName string, orgName strin
 }
 func (that *Config) AddPeerToOrg(org *Organization, peerName string, orgName string, domainRoot string, port uint) {
 	org.AddPeer(peerName, orgName, domainRoot, port)
+}
+
+// FillConfigtx 填充configtx数据
+func (that *Config) FillConfigtx() {
+
+	for i := range that.Channels {
+		that.configtx.AddChannel(that.Channels[i].Name, that.Channels[i].Consortium)
+	}
+
+	for i := range that.Organizations {
+		//加入组织部分数据
+		org := configtx.GenerateEmptyOrganization(that.Organizations[i].Name, controller.GenerateMSPID(that.Organizations[i].Name))
+		that.configtx.AddOrganization(org)
+
+		//为channels添加组织信息
+		// TODO 为channels添加组织信息
+
+		//为channels加入orderer信息
+		for j := range that.Organizations[i].Orderers {
+			orderer := that.Organizations[i].Orderers[j]
+			clientTLSCertPath := controller.GenerateClientTLSCertPath(false, orderer.PeerName, orderer.OrgName, orderer.DomainRoot)
+			serverTLSCertPath := controller.GenerateServerTLSCertPath(false, orderer.PeerName, orderer.OrgName, orderer.DomainRoot)
+			that.configtx.AddOrdererToOrg(org, orderer.PeerName,
+				orderer.OrgName,
+				orderer.DomainRoot,
+				orderer.Port,
+				clientTLSCertPath,
+				serverTLSCertPath,
+			)
+		}
+	}
+
 }

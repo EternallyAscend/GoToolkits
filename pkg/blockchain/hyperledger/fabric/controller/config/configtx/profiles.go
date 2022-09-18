@@ -28,11 +28,16 @@ func GenerateDefaultProfilesChannelApplication(application *Application, orgs []
 	}
 }
 
+type SystemChannelConsortium struct {
+	//TODO
+}
+
 type ProfilesChannelEtcd struct {
-	Consortium  string                      `yaml:"Consortium"`
-	Channel     *Channel                    `yaml:"Channel"`
-	Orderer     *ProfilesChannelOrdererEtcd `yaml:"Orderer"`
-	Application *ProfilesChannelApplication `yaml:"Application"`
+	Consortium  string                              `yaml:"Consortium"`
+	Consortiums map[string]*SystemChannelConsortium `yaml:"Consortiums"`
+	Channel     *Channel                            `yaml:"Channel"`
+	Orderer     *ProfilesChannelOrdererEtcd         `yaml:"Orderer"`
+	Application *ProfilesChannelApplication         `yaml:"Application"`
 }
 
 func GenerateDefaultProfilesChannelWithEtcdOrderer(consortium string, channel *Channel,
@@ -47,4 +52,3 @@ func GenerateDefaultProfilesChannelWithEtcdOrderer(consortium string, channel *C
 	}
 	return profilesChannel
 }
-
