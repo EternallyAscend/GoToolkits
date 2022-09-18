@@ -8,9 +8,7 @@ func MergeSortInt(data []int) []int {
 // MergeSortIntCopy 归并排序，整型数组可用，深拷贝不影响原数组，稳定升序。
 func MergeSortIntCopy(data []int) []int {
 	result := make([]int, len(data))
-	for i := range data {
-		result[i] = data[i]
-	}
+	copy(result, data)
 	return mergeSortIntCore(result, 0, len(data))
 }
 

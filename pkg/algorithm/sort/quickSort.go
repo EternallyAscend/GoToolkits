@@ -8,9 +8,7 @@ func QuickSortInt(data []int) []int {
 // QuickSortIntCopy 快速排序，整型数组升序，深拷贝。
 func QuickSortIntCopy(data []int) []int {
 	result := make([]int, len(data))
-	for i := range data {
-		result[i] = data[i]
-	}
+	copy(result, data)
 	return quickSortIntCore(result, 0, len(data)-1)
 }
 
