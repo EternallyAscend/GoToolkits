@@ -2,8 +2,9 @@ package structure
 
 import (
 	"fmt"
-	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/config"
 	"log"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/config"
 
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/JSON"
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
@@ -89,14 +90,14 @@ func (that *Config) FillConfigtx() {
 		that.configtx.AddChannel(that.Channels[i].Name, that.Channels[i].Consortium)
 	}
 	for i := range that.Organizations {
-		//加入组织部分数据
+		// 加入组织部分数据
 		org := configtx.GenerateEmptyOrganization(that.Organizations[i].Name, controller.GenerateMSPID(that.Organizations[i].Name))
 		that.configtx.AddOrganization(org)
 
-		//为channels添加组织信息
+		// 为channels添加组织信息
 		// TODO 为channels添加组织信息
 
-		//为channels加入orderer信息
+		// 为channels加入orderer信息
 		for j := range that.Organizations[i].Orderers {
 			orderer := that.Organizations[i].Orderers[j]
 			clientTLSCertPath := controller.GenerateClientTLSCertPath(false, orderer.PeerName, orderer.OrgName, orderer.DomainRoot)
