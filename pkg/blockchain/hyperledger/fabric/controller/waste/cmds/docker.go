@@ -29,6 +29,5 @@ func RunDockerContainer() []string {
 }
 
 func GenerateCaYaml(path string) error {
-
 	return nil
 }

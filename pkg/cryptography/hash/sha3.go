@@ -1,7 +1,10 @@
 package hash
 
-import "crypto"
-import "golang.org/x/crypto/sha3"
+import (
+	"crypto"
+
+	"golang.org/x/crypto/sha3"
+)
 
 // https://pkg.go.dev/golang.org/x/crypto/sha3
 

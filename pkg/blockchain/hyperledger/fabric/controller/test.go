@@ -2,11 +2,12 @@ package controller
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/config"
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/environment"
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ssh"
-	"log"
 )
 
 func TestFaber() {

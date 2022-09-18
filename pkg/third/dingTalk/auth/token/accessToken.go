@@ -2,6 +2,7 @@ package dingTalk
 
 import (
 	"fmt"
+
 	openapi "github.com/alibabacloud-go/darabonba-openapi/client"
 	dingtalkoauth2_1_0 "github.com/alibabacloud-go/dingtalk/oauth2_1_0"
 	util "github.com/alibabacloud-go/tea-utils/service"
@@ -54,7 +55,7 @@ func accessToken(clientId string, clientSecret string, code string, refreshToken
 	}()
 
 	if tryErr != nil {
-		var _err = &tea.SDKError{}
+		_err := &tea.SDKError{}
 		if _t, ok := tryErr.(*tea.SDKError); ok {
 			_err = _t
 		} else {

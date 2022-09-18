@@ -3,8 +3,9 @@ package goRedis
 import (
 	"crypto/tls"
 	"errors"
-	"github.com/go-redis/redis"
 	"time"
+
+	"github.com/go-redis/redis"
 )
 
 // Client 封装客户端所需参数的结构体。

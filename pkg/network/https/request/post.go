@@ -2,9 +2,10 @@ package request
 
 import (
 	"errors"
+	"net/http"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/network/https/header"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/https/response"
-	"net/http"
 )
 
 type PostRequest struct {

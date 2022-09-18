@@ -1,9 +1,10 @@
 package controller
 
 import (
+	"log"
+
 	"github.com/hyperledger/fabric-sdk-go/pkg/core/config"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
-	"log"
 )
 
 func loadClient(configPath string) (*fabsdk.FabricSDK, error) {

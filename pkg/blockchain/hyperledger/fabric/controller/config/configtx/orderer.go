@@ -92,7 +92,6 @@ func (that *OrdererEtcd) AddConsenter(peerName string, orgName string, domainRoo
 }
 
 func (that *OrdererEtcd) AddOrdererAndConsenter(peerName string, orgName string, domainRoot string, port uint, ClientTLSCertPath string, ServerTLSCertPath string) {
-
 	that.AddOrderer(peerName, orgName, domainRoot, port)
 	that.AddConsenter(peerName, orgName, domainRoot, port, ClientTLSCertPath, ServerTLSCertPath)
 }

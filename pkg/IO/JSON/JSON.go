@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/EternallyAscend/GoToolkits/pkg/IO/file"
 	"os"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/IO/file"
 )
 
 func TransferStringToJson(stringData string) (interface{}, error) {
@@ -20,7 +21,6 @@ func TransferStringToJson(stringData string) (interface{}, error) {
 }
 
 func TransferJsonToString() {
-
 }
 
 func ListItemInJson(jsonString string) (string, error) {

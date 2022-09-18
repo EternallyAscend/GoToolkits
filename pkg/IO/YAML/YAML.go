@@ -2,9 +2,10 @@ package YAML
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/file"
 	"gopkg.in/yaml.v2"
-	"os"
 )
 
 func ExportToFileYaml(data interface{}, path string) error {
