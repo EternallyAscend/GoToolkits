@@ -8,6 +8,12 @@ func EnterWithCreateFolder(path string) []string {
 	}
 }
 
+func InstallJqCommand() []string {
+	return []string{
+		"apt-get -y install jq",
+	}
+}
+
 func InstallGitCommand() []string {
 	return []string{
 		"apt-get -y install git",
@@ -26,6 +32,7 @@ func InstallBuildEssentialCommand() []string {
 	}
 }
 
+// SetHosts For test using
 func SetHosts() []string {
 	var cmds []string
 	// TODO Set Hyperledger Hosts.
