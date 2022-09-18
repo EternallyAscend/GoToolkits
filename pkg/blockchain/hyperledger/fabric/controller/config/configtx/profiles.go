@@ -29,7 +29,7 @@ func GenerateDefaultProfilesChannelApplication(application *Application, orgs []
 }
 
 type SystemChannelConsortium struct {
-	//TODO
+	// TODO
 }
 
 type ProfilesChannelEtcd struct {
