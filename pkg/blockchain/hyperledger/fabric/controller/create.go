@@ -2,10 +2,11 @@ package controller
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/config"
 	fconfig "github.com/hyperledger/fabric-sdk-go/pkg/core/config"
 	"github.com/hyperledger/fabric-sdk-go/pkg/fabsdk"
-	"log"
 )
 
 func loadClient(configPath string) (*fabsdk.FabricSDK, error) {
@@ -19,14 +20,15 @@ func loadClient(configPath string) (*fabsdk.FabricSDK, error) {
 func GenerateMSPID(orgName string) string {
 	return fmt.Sprintf("%sMSP", orgName)
 }
+
 func GenerateClientTLSCertPath(isPeer bool, peerName, orgName, domainRoot string) string {
 	if isPeer {
 		return fmt.Sprintf("%s/organizations/peerOrganizations/%s.%s/peers/%s.%s.%s/tls/server.crt", config.FabricDataPath, orgName, domainRoot, peerName, orgName, domainRoot)
 	} else {
 		return fmt.Sprintf("%s/organizations/ordererOrganizations/%s.%s/orderers/%s.%s.%s/tls/server.crt", config.FabricDataPath, orgName, domainRoot, peerName, orgName, domainRoot)
 	}
-
 }
+
 func GenerateServerTLSCertPath(isPeer bool, peerName, orgName, domainRoot string) string {
 	if isPeer {
 		return fmt.Sprintf("%s/organizations/peerOrganizations/%s.%s/peers/%s.%s.%s/tls/server.crt", config.FabricDataPath, orgName, domainRoot, peerName, orgName, domainRoot)
