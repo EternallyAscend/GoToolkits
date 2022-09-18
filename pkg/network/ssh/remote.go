@@ -3,9 +3,9 @@ package ssh
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"net"
+	"os"
 	"sync"
 	"time"
 
@@ -72,7 +72,7 @@ func GenerateDefaultIPv4ClientSSH(user string, ipv4 string, port uint, password 
 			ssh.Password(password),
 		}
 	} else {
-		key, err := ioutil.ReadFile(publicKeyPath)
+		key, err := os.ReadFile(publicKeyPath)
 		if nil != err {
 			cli.err = err
 			return cli
