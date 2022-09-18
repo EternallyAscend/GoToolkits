@@ -2,6 +2,7 @@ package structure
 
 import (
 	"fmt"
+	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/config"
 	"log"
 
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/JSON"
@@ -84,11 +85,9 @@ func (that *Config) AddPeerToOrg(org *Organization, peerName string, orgName str
 
 // FillConfigtx 填充configtx数据
 func (that *Config) FillConfigtx() {
-
 	for i := range that.Channels {
 		that.configtx.AddChannel(that.Channels[i].Name, that.Channels[i].Consortium)
 	}
-
 	for i := range that.Organizations {
 		//加入组织部分数据
 		org := configtx.GenerateEmptyOrganization(that.Organizations[i].Name, controller.GenerateMSPID(that.Organizations[i].Name))
@@ -111,5 +110,15 @@ func (that *Config) FillConfigtx() {
 			)
 		}
 	}
+}
 
+func (that *Config) FillCryptoConfig() {
+	for i := range that.Organizations {
+		user := 0
+		for j := range that.Organizations[i].Peers {
+			user += len(that.Organizations[i].Peers[j].PeerUser)
+		}
+		config.GenerateDefaultPeerCryptoConfig(that.Organizations[i].Name, that.Organizations[i].Domain, uint(len(that.Organizations[i].Peers)), uint(user))
+		config.GenerateDefaultOrdererCryptoConfig(that.Organizations[i].Name, that.Organizations[i].Domain)
+	}
 }

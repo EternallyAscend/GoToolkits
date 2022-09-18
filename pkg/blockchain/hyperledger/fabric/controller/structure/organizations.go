@@ -25,13 +25,17 @@ type Orderer struct {
 	DomainRoot string `yaml:"domainRoot" json:"domainRoot"`
 	Port       uint   `yaml:"port" json:"port"`
 }
-
+type PeerUser struct {
+	Username string `yaml:"username" json:"username"`
+	Password string `yaml:"password" json:"password"`
+}
 type Peer struct {
-	Role       []int  `yaml:"role" json:"role"`
-	PeerName   string `yaml:"peerName" json:"peerName"`
-	OrgName    string `yaml:"orgName" json:"orgName"`
-	DomainRoot string `yaml:"domainRoot" json:"domainRoot"`
-	Port       uint   `yaml:"port" json:"port"`
+	Role       []int       `yaml:"role" json:"role"`
+	PeerName   string      `yaml:"peerName" json:"peerName"`
+	OrgName    string      `yaml:"orgName" json:"orgName"`
+	DomainRoot string      `yaml:"domainRoot" json:"domainRoot"`
+	Port       uint        `yaml:"port" json:"port"`
+	PeerUser   []*PeerUser `json:"peerUser" yaml:"peerUser"`
 }
 
 type Organization struct {
