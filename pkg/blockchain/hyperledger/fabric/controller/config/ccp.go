@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/JSON"
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
 )

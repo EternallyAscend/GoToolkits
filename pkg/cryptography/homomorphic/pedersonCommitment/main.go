@@ -2,6 +2,7 @@ package pedersonCommitment
 
 import (
 	"encoding/json"
+
 	"github.com/bwesterb/go-ristretto"
 	"gopkg.in/yaml.v2"
 )
@@ -77,10 +78,10 @@ func (that *DealerUnit) Open(content []byte) bool {
 }
 
 func (that *DealerUnit) CopyParams() *DealerUnit {
-	//g := &ristretto.Point{}
-	//h := &ristretto.Point{}
-	//g.Set(that.G)
-	//h.Set(that.H)
+	// g := &ristretto.Point{}
+	// h := &ristretto.Point{}
+	// g.Set(that.G)
+	// h.Set(that.H)
 	return &DealerUnit{
 		G: that.G,
 		H: that.H,

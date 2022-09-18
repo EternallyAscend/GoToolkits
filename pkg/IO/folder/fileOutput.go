@@ -58,7 +58,7 @@ func BufferOutputWriteOnlyByte(path string, perm os.FileMode, data []byte) error
 }
 
 func BufferOutputClearByte(path string, perm os.FileMode) error {
-	//return BufferOutputByte(path, os.O_TRUNC, perm, []byte("\n"))
+	// return BufferOutputByte(path, os.O_TRUNC, perm, []byte("\n"))
 	return os.WriteFile(path, []byte(""), perm)
 }
 
@@ -104,6 +104,6 @@ func BufferOutputWriteOnlyString(path string, perm os.FileMode, data string) err
 }
 
 func BufferOutputClearString(path string, perm os.FileMode) error {
-	//return BufferOutputString(path, os.O_TRUNC, perm, "")
+	// return BufferOutputString(path, os.O_TRUNC, perm, "")
 	return os.WriteFile(path, []byte(""), perm)
 }

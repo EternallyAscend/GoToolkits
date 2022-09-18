@@ -7,6 +7,4 @@ func ConsoleLog(level uint, contents ...interface{}) {
 }
 
 func FileLog(level uint, contents ...interface{}) {
-
 }
-

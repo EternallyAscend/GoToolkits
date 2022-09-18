@@ -3,6 +3,7 @@ package dockerCompose
 import (
 	"errors"
 	"fmt"
+
 	"gopkg.in/yaml.v2"
 )
 
@@ -10,8 +11,8 @@ type DockerYAML struct {
 	Version  string              `yaml:"version"`
 	Networks map[string]*Network `yaml:"networks"`
 	Services map[string]*Service `yaml:"services"`
-	//Volumes  []string            `yaml:"volumes"`
-	//Driver   []string            `yaml:"driver"`
+	// Volumes  []string            `yaml:"volumes"`
+	// Driver   []string            `yaml:"driver"`
 }
 
 func GenerateDockerYAML(version string) *DockerYAML {
@@ -19,8 +20,8 @@ func GenerateDockerYAML(version string) *DockerYAML {
 		Version:  version,
 		Services: map[string]*Service{},
 		Networks: map[string]*Network{},
-		//Volumes:  []string{},
-		//Driver:   []string{},
+		// Volumes:  []string{},
+		// Driver:   []string{},
 	}
 }
 
@@ -53,7 +54,6 @@ func (that *DockerYAML) ExportToByteArray() ([]byte, error) {
 }
 
 func (that *DockerYAML) ExportToFile(path string, fileName string) error {
-
 	return nil
 }
 

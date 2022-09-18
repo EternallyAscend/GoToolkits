@@ -8,9 +8,7 @@ func MergeSortInt(data []int) []int {
 // MergeSortIntCopy 归并排序，整型数组可用，深拷贝不影响原数组，稳定升序。
 func MergeSortIntCopy(data []int) []int {
 	result := make([]int, len(data))
-	for i := range data {
-		result[i] = data[i]
-	}
+	copy(result, data)
 	return mergeSortIntCore(result, 0, len(data))
 }
 
@@ -20,9 +18,9 @@ func mergeSortIntCore(data []int, start int, end int) []int {
 		return data
 	}
 	middle := (start + end) >> 1
-	//waitGroup := sync.WaitGroup{}
-	//waitGroup.Add(2)
-	//go func() {
+	// waitGroup := sync.WaitGroup{}
+	// waitGroup.Add(2)
+	// go func() {
 	mergeSortIntCore(data, start, middle)
 	//waitGroup.Done()
 	//}()
@@ -34,7 +32,7 @@ func mergeSortIntCore(data []int, start int, end int) []int {
 	rightCursor := middle
 	resultCursor := 0
 	result := make([]int, end-start)
-	//waitGroup.Wait()
+	// waitGroup.Wait()
 	for leftCursor < middle && rightCursor < end {
 		if data[leftCursor] > data[rightCursor] {
 			result[resultCursor] = data[rightCursor]

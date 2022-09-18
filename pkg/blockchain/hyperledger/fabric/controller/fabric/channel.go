@@ -40,7 +40,6 @@ func CreateChannelCommand(ordererPeerName, ordererOrgName, ordererDomainRoot str
 	cmds = append(cmds, fmt.Sprintf("BLOCKFILE=\"%schannel-artifacts/%s.block\"", getBaseFolderPath(), channelName))
 	cmds = append(cmds, fmt.Sprintf("peer channel create -o %s.%s.%s:%d -c %s --ordererTLSHostnameOverride orderer.%s -f .%schannel-artifacts/%s.tx --outputBlock $BLOCKFILE --tls --cafile %sorganizations/ordererOrganizations/%s/orderers/orderer.%s/msp/tlscacerts/tlsca.%s-cert.pem", ordererPeerName, ordererOrgName, ordererDomainRoot, ordererPort, channelName, ordererDomain, getBaseFolderPath(), channelName, getBaseFolderPath(), ordererDomain, ordererDomain, ordererDomain))
 	return cmds
-
 }
 
 func SetGlobals(orderer bool, org string, corePeerAddress string, corePeerPort uint, peerName string, orgName string, domainRoot string, peer string, userAdmin string, pwd string) []string {

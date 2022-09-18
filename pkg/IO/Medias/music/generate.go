@@ -9,8 +9,10 @@ import (
 	"strings"
 )
 
-const fifteen = 15 * 1000
-const ten = 10 * 1000
+const (
+	fifteen = 15 * 1000
+	ten     = 10 * 1000
+)
 
 type Time struct {
 	Hour        int64
@@ -572,10 +574,10 @@ func GenerateEgg() {
 }
 
 func Generate() {
-	//GenerateEgg()
-	//GenerateOldTime()
-	//GenerateStillSing()
-	//GenerateAfterKnown()
-	//GenerateOurSong()
-	//GenerateEnterYourCar()
+	// GenerateEgg()
+	// GenerateOldTime()
+	// GenerateStillSing()
+	// GenerateAfterKnown()
+	// GenerateOurSong()
+	// GenerateEnterYourCar()
 }

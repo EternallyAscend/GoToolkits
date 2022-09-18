@@ -1,10 +1,11 @@
 package waste
 
 import (
+	"log"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller"
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ssh"
-	"log"
 )
 
 func InstallEnvironment(target *ssh.IPv4Client) bool {
@@ -17,7 +18,7 @@ func CheckEnvironment(target *ssh.IPv4Client) bool {
 		log.Println(res[i].GetOutputAsString(), res[i].GetErrorAsString(), res[i].GetErr())
 	}
 	return true
-	//return ExecuteControllerCommand(target, checkEnvironmentCommand())
+	// return ExecuteControllerCommand(target, checkEnvironmentCommand())
 }
 
 func PullDockerImages(target *ssh.IPv4Client) bool {

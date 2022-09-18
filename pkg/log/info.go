@@ -1,5 +1,4 @@
 package log
 
 func info() {
-	
 }

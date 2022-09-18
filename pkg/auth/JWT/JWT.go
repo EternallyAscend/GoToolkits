@@ -1,8 +1,9 @@
 package JWT
 
 import (
-	"github.com/golang-jwt/jwt"
 	"net/http"
+
+	"github.com/golang-jwt/jwt"
 )
 
 // Example for Jwt.
@@ -15,7 +16,7 @@ func DecodeJWT(seg string) ([]byte, error) {
 
 type HandlerJsonWebToken struct {
 	// Interfaces
-	//RequestHandler `json:"requestHandler"` // Inherit Dealer Handler.
+	// RequestHandler `json:"requestHandler"` // Inherit Dealer Handler.
 }
 
 func (this HandlerJsonWebToken) Dealer(w http.ResponseWriter, r *http.Request) (http.ResponseWriter, *http.Request, error) {

@@ -11,7 +11,7 @@ type HandlerRBAC struct {
 	// Roles Allow access roles.
 	Roles []string `json:"roles"`
 	// Interfaces
-	//RequestHandler `json:"requestHandler"` // Inherit Dealer Handler.
+	// RequestHandler `json:"requestHandler"` // Inherit Dealer Handler.
 }
 
 func (this HandlerRBAC) Dealer(w http.ResponseWriter, r *http.Request) (http.ResponseWriter, *http.Request, error) {

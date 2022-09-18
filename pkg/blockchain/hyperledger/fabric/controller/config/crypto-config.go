@@ -22,7 +22,7 @@ func GenerateDefaultOrdererCryptoConfig(name, domainRoot string) *OrdererCryptoC
 		Domain:        domainRoot,
 		EnableNodeOUs: true,
 		Specs: []*OrdererCryptoConfigSpecs{
-			&OrdererCryptoConfigSpecs{
+			{
 				Hostname: fmt.Sprintf("%s.%s", name, domainRoot),
 				SANS: []string{
 					"localhost",
