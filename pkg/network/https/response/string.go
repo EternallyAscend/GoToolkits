@@ -3,9 +3,10 @@ package response
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+
 	gtkHttp "github.com/EternallyAscend/GoToolkits/pkg/network/https"
 	gtkHeader "github.com/EternallyAscend/GoToolkits/pkg/network/https/header"
-	"net/http"
 )
 
 type StringResponse struct {

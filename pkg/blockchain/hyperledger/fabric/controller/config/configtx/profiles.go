@@ -41,9 +41,10 @@ type ProfilesChannelEtcd struct {
 }
 
 func GenerateDefaultProfilesChannelWithEtcdOrderer(consortium string, channel *Channel,
-	//consortium是configtx中profile中的字段，text-network中值为SampleConsortium
+	// consortium是configtx中profile中的字段，text-network中值为SampleConsortium
 	orderer *OrdererEtcd, ordererOrgs []*Organization, ordererCapabilities *Capabilities,
-	application *Application, applicationOrgs []*Organization, applicationCapabilities *Capabilities) *ProfilesChannelEtcd {
+	application *Application, applicationOrgs []*Organization, applicationCapabilities *Capabilities,
+) *ProfilesChannelEtcd {
 	profilesChannel := &ProfilesChannelEtcd{
 		Consortium:  consortium,
 		Channel:     channel,

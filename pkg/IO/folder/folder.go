@@ -7,15 +7,15 @@ import (
 )
 
 type FileNode struct {
-	Sub []FileNode `json:"sub"`
-	Path string `json:"path"`
-	Name string `json:"name"`
-	File bool `json:"file"`
+	Sub  []FileNode `json:"sub"`
+	Path string     `json:"path"`
+	Name string     `json:"name"`
+	File bool       `json:"file"`
 }
 
 type FileTree struct {
 	Root FileNode `json:"root"`
-	Err error `json:"err"`
+	Err  error    `json:"err"`
 }
 
 func GetCurrentPath() string {
@@ -34,7 +34,7 @@ func GetFolderTree(path string) FileTree {
 		Name: "",
 		File: false,
 	}}
-	//temp := &tree.Root
+	// temp := &tree.Root
 	tree.Err = filepath.Walk(path, func(paths string, info os.FileInfo, err error) error {
 		fmt.Println(paths, info)
 		// TODO Make Right FileTree with Right Path.
@@ -79,4 +79,3 @@ func MoveFolder(origin, target string) error {
 func RenameFolder(origin, target string) error {
 	return RenameFile(origin, target)
 }
-

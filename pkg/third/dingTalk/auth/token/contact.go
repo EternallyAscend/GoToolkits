@@ -46,7 +46,7 @@ func getUserResponse(accessToken string, options string) (info *dingtalkcontact_
 	}()
 
 	if tryErr != nil {
-		var err = &tea.SDKError{}
+		err := &tea.SDKError{}
 		if _t, ok := tryErr.(*tea.SDKError); ok {
 			err = _t
 		} else {

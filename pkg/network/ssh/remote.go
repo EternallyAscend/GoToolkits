@@ -3,22 +3,23 @@ package ssh
 import (
 	"errors"
 	"fmt"
-	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
-	"github.com/EternallyAscend/GoToolkits/pkg/command"
-	"golang.org/x/crypto/ssh"
 	"io/ioutil"
 	"log"
 	"net"
 	"sync"
 	"time"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
+	"github.com/EternallyAscend/GoToolkits/pkg/command"
+	"golang.org/x/crypto/ssh"
 )
 
 type SavedIPv4Client struct {
 	Ipv4 string `yaml:"ipv4"`
-	Port uint `yaml:"port"`
+	Port uint   `yaml:"port"`
 	User string `yaml:"user"`
-	Pwd string `yaml:"pwd"`
-	Puk string `yaml:"puk"`
+	Pwd  string `yaml:"pwd"`
+	Puk  string `yaml:"puk"`
 }
 
 func ReadPwdClientFromYaml(yamlPath string) (*SavedIPv4Client, error) {

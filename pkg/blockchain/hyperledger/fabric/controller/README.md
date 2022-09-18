@@ -1,11 +1,17 @@
 # Faber
 
+[![Documentation Status](https://readthedocs.org/projects/fabgo/badge/?version=latest)](https://fabgo.readthedocs.io/zh/latest/?badge=latest)
+
+url/containerName peerName.orgName.domainRoot:port
+MspID %sMSP orgName
+caName ca-%s-%s peerName orgName
+
 ## Faber 环境配置
 
 - Docker、Docker-Compose
 - Golang
 - Fabric
-- Other: Wget, Git, GCC, Make
+- Other: Wget, Git, GCC, Make, Jq
 - Environment
 
 ## Faber 目录结构

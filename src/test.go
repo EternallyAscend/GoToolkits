@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/Medias/music"
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller"
@@ -10,7 +12,6 @@ import (
 	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"github.com/EternallyAscend/GoToolkits/pkg/container/docker/dockerCompose"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ssh"
-	"os"
 )
 
 func main() {
@@ -42,10 +43,10 @@ func main() {
 	fmt.Println(bools)
 	bools = waste.CheckEnvironment(sshClient)
 	fmt.Println(bools)
-	//bools = controller.PullDockerImages(sshClient)
-	//fmt.Println(bools)
-	//bools = controller.PullFabricBinaryFiles(sshClient)
-	//fmt.Println(bools)
+	// bools = controller.PullDockerImages(sshClient)
+	// fmt.Println(bools)
+	// bools = controller.PullFabricBinaryFiles(sshClient)
+	// fmt.Println(bools)
 	_ = sshClient.Close()
 	music.Generate()
 }

@@ -2,12 +2,13 @@ package structure
 
 import (
 	"fmt"
+	"log"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/JSON"
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller"
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/config/configtx"
 	"gopkg.in/yaml.v2"
-	"log"
 )
 
 type Config struct {
@@ -49,6 +50,7 @@ func ReadConfigFromFile(path string) *Config {
 	// TODO Reading Config Files.
 	return config
 }
+
 func (that *Config) AddOrganization(org *Organization) {
 	that.Organizations = append(that.Organizations, org)
 }
@@ -71,9 +73,11 @@ func (that *Config) FindOrganization(orgName string) *Organization {
 func (that *Config) AddOrdererToOrg(org *Organization, peerName string, orgName string, domainRoot string, port uint) {
 	org.AddOrderer(peerName, orgName, domainRoot, port)
 }
+
 func (that *Config) AddCaToOrg(org *Organization, peerName string, orgName string, domainRoot string, port uint, grpcPort uint) {
 	org.AddCa(peerName, orgName, domainRoot, port, grpcPort)
 }
+
 func (that *Config) AddPeerToOrg(org *Organization, peerName string, orgName string, domainRoot string, port uint) {
 	org.AddPeer(peerName, orgName, domainRoot, port)
 }

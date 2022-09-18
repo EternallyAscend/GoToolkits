@@ -10,10 +10,12 @@ import (
 	"os"
 )
 
-const EccKeySize224 = 224
-const EccKeySize256 = 256
-const EccKeySize384 = 384
-const EccKeySize521 = 521
+const (
+	EccKeySize224 = 224
+	EccKeySize256 = 256
+	EccKeySize384 = 384
+	EccKeySize521 = 521
+)
 
 // EccKeyFileGenerate Deprecated
 // 被遗弃的函数
