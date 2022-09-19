@@ -3,12 +3,13 @@ package ssh
 import (
 	"errors"
 	"fmt"
-	"github.com/pkg/sftp"
 	"log"
 	"net"
 	"os"
 	"sync"
 	"time"
+
+	"github.com/pkg/sftp"
 
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
 	"github.com/EternallyAscend/GoToolkits/pkg/command"

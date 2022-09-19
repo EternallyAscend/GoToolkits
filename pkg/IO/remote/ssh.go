@@ -1,10 +1,11 @@
 package remote
 
 import (
-	"github.com/EternallyAscend/GoToolkits/pkg/network/ssh"
 	"io"
 	"os"
 	"path"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/network/ssh"
 )
 
 func UploadFile(user string, ipv4 string, port uint, password string, publicKeyPath string, localFilePath, remoteFilePath string) error {
