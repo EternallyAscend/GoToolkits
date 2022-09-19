@@ -3,6 +3,7 @@ package ssh
 import (
 	"errors"
 	"fmt"
+	"github.com/pkg/sftp"
 	"log"
 	"net"
 	"os"
@@ -168,4 +169,8 @@ func (that *IPv4Client) Close() error {
 		return that.client.Close()
 	}
 	return nil
+}
+
+func (that *IPv4Client) GetSftpConnect() (*sftp.Client, error) {
+	return sftp.NewClient(that.client)
 }
