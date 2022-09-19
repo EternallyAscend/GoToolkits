@@ -44,6 +44,7 @@ func GenerateTlsCertPath(isPeer bool, peerName, orgName, domainRoot string) stri
 		return fmt.Sprintf("%sorganizations/ordererOrganizations/%s.%s/orderers/%s.%s.%s/tls", config.FabricDataPath, orgName, domainRoot, peerName, orgName, domainRoot)
 	}
 }
+
 func GenerateMspPath(isPeer bool, peerName, orgName, domainRoot string) string {
 	if isPeer {
 		return fmt.Sprintf("%sorganizations/peerOrganizations/%s.%s/peers/%s.%s.%s/msp", config.FabricDataPath, orgName, domainRoot, peerName, orgName, domainRoot)
