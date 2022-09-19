@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/config"
+	"github.com/EternallyAscend/GoToolkits/pkg/blockchain/hyperledger/fabric/controller/docker"
 
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/JSON"
 	"github.com/EternallyAscend/GoToolkits/pkg/IO/YAML"
@@ -17,6 +18,7 @@ type Config struct {
 	Organizations []*Organization `yaml:"organizations" json:"organizations"`
 	Channels      []*Channel      `yaml:"channels" json:"channels"`
 	Applications  []*Application  `yaml:"applications" json:"applications"`
+	NetworkName   string          `yaml:"networkName" json:"networkName"`
 	configtx      *configtx.ConfigTx
 }
 
@@ -91,7 +93,7 @@ func (that *Config) FillConfigtx() {
 	}
 	for i := range that.Organizations {
 		// 加入组织部分数据
-		org := configtx.GenerateEmptyOrganization(that.Organizations[i].Name, controller.GenerateMSPID(that.Organizations[i].Name))
+		org := configtx.GenerateEmptyOrganization(that.Organizations[i].Name, controller.GenerateMspID(that.Organizations[i].Name))
 		that.configtx.AddOrganization(org)
 
 		// 为channels添加组织信息
@@ -113,6 +115,7 @@ func (that *Config) FillConfigtx() {
 	}
 }
 
+// FillCryptoConfig 填充crypto-config
 func (that *Config) FillCryptoConfig() {
 	for i := range that.Organizations {
 		user := 0
@@ -121,5 +124,49 @@ func (that *Config) FillCryptoConfig() {
 		}
 		config.GenerateDefaultPeerCryptoConfig(that.Organizations[i].Name, that.Organizations[i].Domain, uint(len(that.Organizations[i].Peers)), uint(user))
 		config.GenerateDefaultOrdererCryptoConfig(that.Organizations[i].Name, that.Organizations[i].Domain)
+	}
+}
+
+// FillDockerCompose 填充docker-compose
+func (that *Config) FillDockerCompose() {
+	for i := range that.Organizations {
+		for j := range that.Organizations[i].Peers {
+			peer := that.Organizations[i].Peers[j]
+			docker.GeneratePeerService(
+				config.FabricVersionFull,
+				peer.PeerName,
+				peer.OrgName,
+				peer.DomainRoot,
+				that.NetworkName,
+				true,
+				controller.GenerateTlsCertPath(true, peer.PeerName, peer.OrgName, peer.DomainRoot),
+				true,
+				controller.GenerateMspID(peer.OrgName),
+				controller.GenerateMspPath(true, peer.OrgName, peer.OrgName, peer.DomainRoot),
+				peer.Port,
+				peer.ChaincodePort,
+				peer.OperationsPort,
+			)
+		}
+	}
+	for i := range that.Organizations {
+		for j := range that.Organizations[i].Orderers {
+			orderer := that.Organizations[i].Orderers[j]
+			docker.GenerateOrdererService(
+				config.FabricCaVersionFull,
+				orderer.PeerName,
+				orderer.OrgName,
+				orderer.DomainRoot,
+				that.NetworkName,
+				orderer.Port,
+				controller.GenerateMspID(orderer.OrgName),
+				controller.GenerateMspPath(false, orderer.PeerName, orderer.OrgName, orderer.DomainRoot),
+				orderer.OperationPort,
+				true,
+				controller.GenerateTlsCertPath(false, orderer.PeerName, orderer.OrgName, orderer.DomainRoot),
+				controller.GenerateBlockPath(),
+				true,
+			)
+		}
 	}
 }

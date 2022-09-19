@@ -6,7 +6,7 @@ import (
 	"github.com/EternallyAscend/GoToolkits/pkg/container/docker/dockerCompose"
 )
 
-func GenerateOrdererService(imageVersion string, peerName string, orgName string, domainRoot string, generalPort uint, msp string, mspPath string, operationPort uint, network string, tls bool, tlsPath string, blockPath string, kafkaVerbose bool) *dockerCompose.Service {
+func GenerateOrdererService(imageVersion string, peerName string, orgName string, domainRoot string, network string, generalPort uint, msp string, mspPath string, operationPort uint, tls bool, tlsPath string, blockPath string, kafkaVerbose bool) *dockerCompose.Service {
 	service := &dockerCompose.Service{
 		Image: fmt.Sprintf("hyperledger/fabric-orderer:%s", imageVersion),
 		Environment: []string{
