@@ -24,27 +24,30 @@ func UploadFile(user string, ipv4 string, port uint, password string, publicKeyP
 	remoteFileName := path.Base(localFilePath)
 
 	localFile, err := os.Open(localFilePath)
-	if err != nil {
+	if nil != err {
 		return err
 	}
 	defer localFile.Close()
 
 	remoteFile, err := ftp.Create(path.Join(remoteFilePath, remoteFileName))
-	if err != nil {
+	if nil != err {
 		return err
 	}
 	defer remoteFile.Close()
 	buffer := make([]byte, 1024)
 	for {
 		n, errIn := localFile.Read(buffer)
-		if errIn != nil {
-			if errIn == io.EOF {
-				break
-			} else {
-				return err
+		if nil == errIn {
+			_, errIn = remoteFile.Write(buffer[:n])
+			if nil != errIn {
+				return errIn
 			}
+			continue
+		} else if errIn == io.EOF {
+			break
+		} else {
+			return errIn
 		}
-		remoteFile.Write(buffer[:n])
 	}
 	return err
 }
@@ -63,13 +66,13 @@ func DownloadFile(user string, ipv4 string, port uint, password string, publicKe
 	defer ftp.Close()
 
 	remoteFile, err := ftp.Open(remoteFilePath)
-	if err != nil {
+	if nil != err {
 		return err
 	}
 	defer remoteFile.Close()
 	localFilename := path.Base(remoteFilePath)
 	dstFile, err := os.Create(path.Join(localFilePath, localFilename))
-	if err != nil {
+	if nil != err {
 		return err
 	}
 	defer dstFile.Close()
