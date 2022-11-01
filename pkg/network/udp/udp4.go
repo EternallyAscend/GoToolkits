@@ -35,5 +35,4 @@ func ListenViaUdp4(handler func([]byte), port uint) {
 		}
 		handler(buffer)
 	}
-
 }
