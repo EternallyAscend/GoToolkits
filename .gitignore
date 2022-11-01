@@ -9,7 +9,7 @@
 *.wav
 
 ./config/data
-./config/hyperledger
+config/hyperledger
 ./config/hyperledger/*
 
 pkg/blockchain/hyperledger/fabric/fabric-samples
