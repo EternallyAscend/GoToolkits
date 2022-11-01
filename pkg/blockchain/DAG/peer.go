@@ -2,8 +2,9 @@ package DAG
 
 import (
 	"errors"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
 	"time"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
 )
 
 // TODO Change to Gossip Cluster https://www.jianshu.com/p/5198b869374a
@@ -18,14 +19,14 @@ import (
 const DefaultOrigin = "192.168.1.1:8000"
 
 type Peer struct {
-	Info *PeerInfo `json:"info" yaml:"info"`
+	Info   *PeerInfo   `json:"info" yaml:"info"`
 	Router *PeerRouter `json:"router" yaml:"router"`
-	Tasks *TasksList `json:"tasks" yaml:"tasks"`
+	Tasks  *TasksList  `json:"tasks" yaml:"tasks"`
 }
 
 type PeerInfo struct {
 	Address string `json:"address" yaml:"address"`
-	Port uint `json:"port" yaml:"port"`
+	Port    uint   `json:"port" yaml:"port"`
 }
 
 type PeerRouter struct {
@@ -33,9 +34,9 @@ type PeerRouter struct {
 }
 
 type TasksList struct {
-	Command string `json:"command" yaml:"command"`
-	Timestamp time.Time `json:"timestamp" yaml:"timestamp"`
-	Reached []*PeerInfo `json:"reached" yaml:"reached"`
+	Command   string      `json:"command" yaml:"command"`
+	Timestamp time.Time   `json:"timestamp" yaml:"timestamp"`
+	Reached   []*PeerInfo `json:"reached" yaml:"reached"`
 }
 
 func GeneratePeer(port uint) (*Peer, error) {
