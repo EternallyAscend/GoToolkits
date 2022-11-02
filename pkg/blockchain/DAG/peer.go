@@ -3,10 +3,11 @@ package DAG
 import (
 	"encoding/json"
 	"errors"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 	"log"
 	"time"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 )
 
 // TODO Change to Gossip Cluster https://www.jianshu.com/p/5198b869374a
@@ -18,12 +19,14 @@ import (
 
 // Timer https://seekload.blog.csdn.net/article/details/113155421
 
-const DefaultIP = "192.168.1.1"
-const DefaultPort = 8000
-const DefaultTcpPort = 9000
+const (
+	DefaultIP      = "192.168.1.1"
+	DefaultPort    = 8000
+	DefaultTcpPort = 9000
+)
 
 type Package struct {
-	Type int `json:"type" yaml:"type"`
+	Type    int    `json:"type" yaml:"type"`
 	Message []byte `json:"message" yaml:"message"`
 }
 
@@ -38,15 +41,15 @@ func UnpackPackage(data []byte) *Package {
 }
 
 type Peer struct {
-	Info *PeerInfo `json:"info" yaml:"info"`
+	Info   *PeerInfo   `json:"info" yaml:"info"`
 	Router *PeerRouter `json:"router" yaml:"router"`
-	Tasks *TasksList `json:"tasks" yaml:"tasks"`
+	Tasks  *TasksList  `json:"tasks" yaml:"tasks"`
 }
 
 type PeerInfo struct {
 	Address string `json:"address" yaml:"address"`
-	Port uint `json:"port" yaml:"port"`
-	TcpPort uint `json:"tcpPort" yaml:"tcpPort"`
+	Port    uint   `json:"port" yaml:"port"`
+	TcpPort uint   `json:"tcpPort" yaml:"tcpPort"`
 }
 
 func UnpackPeerInfo(data []byte) *PeerInfo {
@@ -68,9 +71,9 @@ type PeerRouter struct {
 }
 
 type TasksList struct {
-	Command string `json:"command" yaml:"command"`
-	Timestamp time.Time `json:"timestamp" yaml:"timestamp"`
-	Reached []*PeerInfo `json:"reached" yaml:"reached"`
+	Command   string      `json:"command" yaml:"command"`
+	Timestamp time.Time   `json:"timestamp" yaml:"timestamp"`
+	Reached   []*PeerInfo `json:"reached" yaml:"reached"`
 }
 
 func GeneratePeer(port uint) (*Peer, error) {
@@ -114,7 +117,6 @@ func StartOrigin() {
 }
 
 func (that *Peer) listen() {
-
 }
 
 func (that *Peer) Join() {
@@ -173,4 +175,3 @@ func (that *Peer) Exit() error {
 func (that *Peer) Execute() error {
 	return nil
 }
-
