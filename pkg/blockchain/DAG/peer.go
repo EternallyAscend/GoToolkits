@@ -1,8 +1,11 @@
 package DAG
 
 import (
+	"encoding/json"
 	"errors"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
+	"log"
 	"time"
 )
 
@@ -15,7 +18,24 @@ import (
 
 // Timer https://seekload.blog.csdn.net/article/details/113155421
 
-const DefaultOrigin = "192.168.1.1:8000"
+const DefaultIP = "192.168.1.1"
+const DefaultPort = 8000
+const DefaultTcpPort = 9000
+
+type Package struct {
+	Type int `json:"type" yaml:"type"`
+	Message []byte `json:"message" yaml:"message"`
+}
+
+func UnpackPackage(data []byte) *Package {
+	p := &Package{}
+	err := json.Unmarshal(data, p)
+	if nil != err {
+		log.Println(err)
+		return nil
+	}
+	return p
+}
 
 type Peer struct {
 	Info *PeerInfo `json:"info" yaml:"info"`
@@ -26,6 +46,21 @@ type Peer struct {
 type PeerInfo struct {
 	Address string `json:"address" yaml:"address"`
 	Port uint `json:"port" yaml:"port"`
+	TcpPort uint `json:"tcpPort" yaml:"tcpPort"`
+}
+
+func UnpackPeerInfo(data []byte) *PeerInfo {
+	p := &PeerInfo{}
+	err := json.Unmarshal(data, p)
+	if nil != err {
+		log.Println(err)
+		return nil
+	}
+	return p
+}
+
+func (that *PeerInfo) SendToPeerByUdp(data []byte) error {
+	return udp.SendViaUdp4(that.Address, that.Port, data)
 }
 
 type PeerRouter struct {
@@ -51,11 +86,57 @@ func GeneratePeer(port uint) (*Peer, error) {
 	}, nil
 }
 
-func (that *Peer) Join() error {
-	// TODO Request Default Address
+func StartOrigin() {
+	peer, err := GeneratePeer(DefaultPort)
+	if nil != err {
+		log.Println(err)
+		return
+	}
+	udp.ListenViaUdp4(func(data []byte) {
+		p := UnpackPackage(data)
+		if nil == p {
+			return
+		}
+		switch p.Type {
+		case 0: // Add Peer Into Network.
+			peerInfo := UnpackPeerInfo(p.Message)
+			if nil == peerInfo {
+				return
+			} else {
+				// Send back Neighbor.
+
+				// Add Neighbor.
+				peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
+			}
+			break
+		}
+	}, 8000)
+}
+
+func (that *Peer) listen() {
+
+}
+
+func (that *Peer) Join() {
+	// Request Default Address
+	defaultPeer := PeerInfo{
+		Address: DefaultIP,
+		Port:    DefaultPort,
+		TcpPort: DefaultTcpPort,
+	}
+	peerInfo, err := json.Marshal(that.Info)
+	if nil != err {
+		log.Println(err)
+		return
+	}
+	err = defaultPeer.SendToPeerByUdp(peerInfo)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	// TODO fetch Neighbor
 	// TODO set Timer (Background Tasks)
-	return errors.New("")
+	return
 }
 
 func (that *Peer) fetch() *Peer {
@@ -68,11 +149,19 @@ func (that *Peer) Refresh() *Peer {
 	return that
 }
 
-func (that *Peer) ReleaseTask() *Peer {
+//func (that *Peer) ReleaseTask() *Peer {
+//	return that
+//}
+//
+//func (that *Peer) BroadcastTaskResult() *Peer {
+//	return that
+//}
+
+func (that *Peer) ReleaseModel() *Peer {
 	return that
 }
 
-func (that *Peer) Broadcast() *Peer {
+func (that *Peer) VerifyModel() *Peer {
 	return that
 }
 
@@ -84,3 +173,4 @@ func (that *Peer) Exit() error {
 func (that *Peer) Execute() error {
 	return nil
 }
+
