@@ -15,6 +15,7 @@ import (
 )
 
 func main() {
+	os.Exit(0)
 	controller.TestFaber()
 	os.Exit(0)
 	scli, _ := ssh.ReadPwdClientFromYaml("./config/testServer.yaml")
@@ -25,7 +26,7 @@ func main() {
 
 	dealer := dockerCompose.GenerateDockerYAML("2")
 	dealer.AddNetwork(dockerCompose.GenerateNetwork("testNetwork"))
-	cas := docker.GenerateCaServices("2.2", "ca-org1", false, 7054, 17054, "../organizations/fabric-ca/org1", "adminpw", "test1", "test2", "test3")
+	cas := docker.GenerateCaServices("2.2", "ca-org1", "", "", false, 7054, 17054, "../organizations/fabric-ca/org1", "adminpw", "test1", "test2", "test3")
 	YAML.ExportToFileYaml(cas, "./cas.yaml")
 	dealer.AddService(cas)
 
