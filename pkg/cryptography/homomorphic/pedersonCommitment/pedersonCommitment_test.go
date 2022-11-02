@@ -32,7 +32,7 @@ func TestPedersonCommitment(t *testing.T) {
 		}
 		log.Println(len(d), len(c))
 		start := time.Now().UnixMicro()
-		//time.Sleep(time.Second)
+		// time.Sleep(time.Second)
 		vp := GenerateVerifiableMessage()
 		vp.AppendDataArray(d, c)
 		vp.ConfirmMessage(d)
@@ -41,5 +41,4 @@ func TestPedersonCommitment(t *testing.T) {
 		end := time.Now().UnixMicro()
 		log.Println(i, " : ", end-start, "ms ", middle-start, "ms ", end-middle, "ms")
 	}
-
 }
