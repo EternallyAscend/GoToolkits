@@ -19,18 +19,19 @@ import (
 
 // Timer https://seekload.blog.csdn.net/article/details/113155421
 
+const DefaultIP = "192.168.1.1"
+const DefaultPort = 8000
+const DefaultTcpPort = 9000
+
+const DefaultK = 2
+const DefaultNeighborRefreshTimeGap = time.Second // time.Minute
+
 const MethodJoin = 0
 const MethodRefresh = 1
 const MethodExit = 2
 const MethodReceiveGradient = 3 // Deal Local Training Result Reached.
-const MethodReceiveModel = 4 // Deal Blockchain Training Result Broadcast.
-const MethodCheckModel = 5 // Check Model Training Result.
-
-const DefaultTimeGap = time.Second // time.Minute
-
-const DefaultIP = "192.168.1.1"
-const DefaultPort = 8000
-const DefaultTcpPort = 9000
+const MethodReceiveModel = 4    // Deal Blockchain Training Result Broadcast.
+const MethodCheckModel = 5      // Check Model Training Result.
 
 func GetDefaultPeerInfo() *PeerInfo {
 	return &PeerInfo{
@@ -111,16 +112,7 @@ type TasksList struct {
 	Reached   []*PeerInfo `json:"reached" yaml:"reached"`
 }
 
-type Header struct {
-
-}
-
-// PeerStorage DAG Data Structure.
-type PeerStorage struct {
-	Header *Header `json:"header" yaml:"header"`
-}
-
-func GeneratePeer(port uint) (*Peer, error) {
+func GeneratePeer(port uint, tcpPort uint) (*Peer, error) {
 	ipv4Address, err := ip.GetLocalIpv4Address()
 	if nil != err {
 		return nil, err
@@ -129,16 +121,19 @@ func GeneratePeer(port uint) (*Peer, error) {
 		Info: &PeerInfo{
 			Address: ipv4Address,
 			Port:    port,
+			TcpPort: tcpPort,
 		},
 	}, nil
 }
 
 func StartOrigin() {
-	peer, err := GeneratePeer(DefaultPort)
+	peer, err := GeneratePeer(DefaultPort, DefaultTcpPort)
 	if nil != err {
 		log.Println(err)
 		return
 	}
+	// TODO Judge Genesis Block.
+	// If genesis block is existed this process will read and continue, otherwise create.
 	udp.ListenViaUdp4(func(data []byte) {
 		p := UnpackPackage(data)
 		if nil == p {
@@ -177,6 +172,8 @@ func StartOrigin() {
 			}
 			delete(peer.Router.Neighbor, neighbor.HashString())
 			break
+		default:
+			break
 		}
 	}, 8000)
 }
@@ -209,6 +206,22 @@ func (that *Peer) listen() {
 				break
 			}
 			delete(that.Router.Neighbor, neighbor.HashString())
+			break
+		case MethodReceiveGradient: // Receive Gradient Trained by Other Process.
+			// TODO File Path or Transfer Directly.
+			that.readGradient("")
+			// TODO Aggregate Gradient.
+			that.aggregateGradient().ReleaseModel()
+			break
+		case MethodReceiveModel:
+			// TODO Verify Received Model in Other Process.
+			that.receiveModel().verifyModel()
+			break
+		case MethodCheckModel:
+			// TODO Try Model Correction.
+			that.Try()
+			break
+		default:
 			break
 		}
 	})
@@ -260,10 +273,10 @@ func (that *Peer) fetch() {
 					// TODO Timeout and Remove Neighbor.
 					log.Println(err)
 				}
-				time.Sleep(DefaultTimeGap)
+				time.Sleep(DefaultNeighborRefreshTimeGap)
 			}
 		}
-		time.Sleep(DefaultTimeGap)
+		time.Sleep(DefaultNeighborRefreshTimeGap)
 	}
 	return
 }
@@ -291,7 +304,7 @@ func (that *Peer) readGradient(path string) []float64 {
 }
 
 func (that *Peer) aggregateGradient() *Peer {
-	// TODO Accumulative to Threshold. Max Circle or Gradient Size.
+	// TODO Accumulative to Threshold. Max Circle, Max Time or Gradient Size.
 	return that
 }
 
@@ -319,6 +332,7 @@ func (that *Peer) verifyModel() *Peer {
 // Try Train with Test Data and Get Result.
 func (that *Peer) Try() {
 	// TODO Communicate between Processes.
+	that.verifyModel()
 }
 
 func (that *Peer) Exit() error {
