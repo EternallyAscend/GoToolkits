@@ -3,11 +3,12 @@ package DAG
 import (
 	"encoding/json"
 	"errors"
+	"log"
+	"time"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
-	"log"
-	"time"
 )
 
 // TODO Change to Gossip Cluster https://www.jianshu.com/p/5198b869374a
@@ -19,9 +20,11 @@ import (
 
 // Timer https://seekload.blog.csdn.net/article/details/113155421
 
-const DefaultIP = "192.168.1.1"
-const DefaultPort = 8000
-const DefaultTcpPort = 9000
+const (
+	DefaultIP      = "192.168.1.1"
+	DefaultPort    = 8000
+	DefaultTcpPort = 9000
+)
 
 type Package struct {
 	Type    uint   `json:"type" yaml:"type"`
@@ -84,7 +87,7 @@ func (that *PeerInfo) SendToPeerByUdp(data []byte) error {
 }
 
 type PeerRouter struct {
-	//Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
+	// Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
 	Neighbor map[string]*PeerInfo `json:"neighbor" yaml:"neighbor"`
 }
 
@@ -95,8 +98,7 @@ type TasksList struct {
 }
 
 // PeerStorage DAG Data Structure.
-type PeerStorage struct {
-}
+type PeerStorage struct{}
 
 func GeneratePeer(port uint) (*Peer, error) {
 	ipv4Address, err := ip.GetLocalIpv4Address()
@@ -131,7 +133,7 @@ func StartOrigin() {
 				// Send back Neighbor.
 
 				// Add Neighbor.
-				//peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
+				// peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
 				peer.Router.Neighbor[peerInfo.HashString()] = peerInfo
 			}
 			break

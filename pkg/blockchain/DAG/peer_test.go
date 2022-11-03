@@ -7,5 +7,4 @@ func TestStartOrigin(t *testing.T) {
 }
 
 func TestPeer_Join(t *testing.T) {
-
 }
