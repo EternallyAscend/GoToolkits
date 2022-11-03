@@ -1,10 +1,8 @@
 package DAG
 
-type Header struct {
-}
+type Header struct{}
 
-type Body struct {
-}
+type Body struct{}
 
 // Block DAG Data Structure.
 type Block struct {
