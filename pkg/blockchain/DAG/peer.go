@@ -3,6 +3,7 @@ package DAG
 import (
 	"encoding/json"
 	"errors"
+	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 	"log"
@@ -23,7 +24,7 @@ const DefaultPort = 8000
 const DefaultTcpPort = 9000
 
 type Package struct {
-	Type int `json:"type" yaml:"type"`
+	Type    uint   `json:"type" yaml:"type"`
 	Message []byte `json:"message" yaml:"message"`
 }
 
@@ -38,15 +39,20 @@ func UnpackPackage(data []byte) *Package {
 }
 
 type Peer struct {
-	Info *PeerInfo `json:"info" yaml:"info"`
+	Info   *PeerInfo   `json:"info" yaml:"info"`
 	Router *PeerRouter `json:"router" yaml:"router"`
-	Tasks *TasksList `json:"tasks" yaml:"tasks"`
+	Tasks  *TasksList  `json:"tasks" yaml:"tasks"`
 }
 
 type PeerInfo struct {
 	Address string `json:"address" yaml:"address"`
-	Port uint `json:"port" yaml:"port"`
-	TcpPort uint `json:"tcpPort" yaml:"tcpPort"`
+	Port    uint   `json:"port" yaml:"port"`
+	TcpPort uint   `json:"tcpPort" yaml:"tcpPort"`
+}
+
+func (that *PeerInfo) HashString() string {
+	// TODO Add Random Id for Peers to Calculate Hash Value.
+	return hash.SHA512String([]byte(that.Address))
 }
 
 func UnpackPeerInfo(data []byte) *PeerInfo {
@@ -59,18 +65,37 @@ func UnpackPeerInfo(data []byte) *PeerInfo {
 	return p
 }
 
+func UnpackPeerInfoList(data []byte) []*PeerInfo {
+	var pList []*PeerInfo
+	err := json.Unmarshal(data, &pList)
+	if nil != err {
+		log.Println(err)
+		return nil
+	}
+	return pList
+}
+
+func (that *PeerInfo) UdpListen(f func([]byte)) {
+	udp.ListenViaUdp4(f, that.Port)
+}
+
 func (that *PeerInfo) SendToPeerByUdp(data []byte) error {
 	return udp.SendViaUdp4(that.Address, that.Port, data)
 }
 
 type PeerRouter struct {
-	Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
+	//Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
+	Neighbor map[string]*PeerInfo `json:"neighbor" yaml:"neighbor"`
 }
 
 type TasksList struct {
-	Command string `json:"command" yaml:"command"`
-	Timestamp time.Time `json:"timestamp" yaml:"timestamp"`
-	Reached []*PeerInfo `json:"reached" yaml:"reached"`
+	Command   string      `json:"command" yaml:"command"`
+	Timestamp time.Time   `json:"timestamp" yaml:"timestamp"`
+	Reached   []*PeerInfo `json:"reached" yaml:"reached"`
+}
+
+// PeerStorage DAG Data Structure.
+type PeerStorage struct {
 }
 
 func GeneratePeer(port uint) (*Peer, error) {
@@ -106,19 +131,42 @@ func StartOrigin() {
 				// Send back Neighbor.
 
 				// Add Neighbor.
-				peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
+				//peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
+				peer.Router.Neighbor[peerInfo.HashString()] = peerInfo
 			}
 			break
 		}
 	}, 8000)
 }
 
+// listen Background Information.
 func (that *Peer) listen() {
-
+	that.Info.UdpListen(func(data []byte) {
+		p := UnpackPackage(data)
+		if nil == p {
+			return
+		}
+		switch p.Type {
+		case 1: // Receive Neighbor PeerInfo from Origin.
+			neighbor := UnpackPeerInfoList(p.Message)
+			if nil != neighbor {
+				for i := 0; i < len(neighbor); i++ {
+					if nil == that.Router.Neighbor[neighbor[i].HashString()] {
+						that.Router.Neighbor[neighbor[i].HashString()] = neighbor[i]
+					}
+				}
+			}
+			break
+		case 2: //
+			break
+		}
+	})
 }
 
 func (that *Peer) Join() {
-	// Request Default Address
+	// Run Callback Function on Background.
+	go that.listen()
+	// Request Default Address.
 	defaultPeer := PeerInfo{
 		Address: DefaultIP,
 		Port:    DefaultPort,
@@ -173,4 +221,3 @@ func (that *Peer) Exit() error {
 func (that *Peer) Execute() error {
 	return nil
 }
-
