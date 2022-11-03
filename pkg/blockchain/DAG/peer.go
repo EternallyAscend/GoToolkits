@@ -2,12 +2,13 @@ package DAG
 
 import (
 	"encoding/json"
-	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 	"log"
 	"os"
 	"time"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 )
 
 // TODO Change to Gossip Cluster https://www.jianshu.com/p/5198b869374a
@@ -19,18 +20,22 @@ import (
 
 // Timer https://seekload.blog.csdn.net/article/details/113155421
 
-const MethodJoin = 0
-const MethodRefresh = 1
-const MethodExit = 2
-const MethodReceiveGradient = 3 // Deal Local Training Result Reached.
-const MethodReceiveModel = 4 // Deal Blockchain Training Result Broadcast.
-const MethodCheckModel = 5 // Check Model Training Result.
+const (
+	MethodJoin            = 0
+	MethodRefresh         = 1
+	MethodExit            = 2
+	MethodReceiveGradient = 3 // Deal Local Training Result Reached.
+	MethodReceiveModel    = 4 // Deal Blockchain Training Result Broadcast.
+	MethodCheckModel      = 5 // Check Model Training Result.
+)
 
 const DefaultTimeGap = time.Second // time.Minute
 
-const DefaultIP = "192.168.1.1"
-const DefaultPort = 8000
-const DefaultTcpPort = 9000
+const (
+	DefaultIP      = "192.168.1.1"
+	DefaultPort    = 8000
+	DefaultTcpPort = 9000
+)
 
 func GetDefaultPeerInfo() *PeerInfo {
 	return &PeerInfo{
@@ -101,7 +106,7 @@ func (that *PeerInfo) UdpSendToPeer(data []byte) error {
 }
 
 type PeerRouter struct {
-	//Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
+	// Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
 	Neighbor map[string]*PeerInfo `json:"neighbor" yaml:"neighbor"`
 }
 
@@ -111,9 +116,7 @@ type TasksList struct {
 	Reached   []*PeerInfo `json:"reached" yaml:"reached"`
 }
 
-type Header struct {
-
-}
+type Header struct{}
 
 // PeerStorage DAG Data Structure.
 type PeerStorage struct {
@@ -166,7 +169,7 @@ func StartOrigin() {
 					return
 				}
 				// Add Neighbor.
-				//peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
+				// peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
 				peer.Router.Neighbor[peerInfo.HashString()] = peerInfo
 			}
 			break
