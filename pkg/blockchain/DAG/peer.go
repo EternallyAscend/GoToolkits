@@ -6,7 +6,7 @@ import (
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 	"log"
-	"os"
+	"strconv"
 	"time"
 )
 
@@ -19,19 +19,38 @@ import (
 
 // Timer https://seekload.blog.csdn.net/article/details/113155421
 
-const DefaultIP = "192.168.1.1"
+const DefaultIP = "127.0.0.1"
 const DefaultPort = 8000
 const DefaultTcpPort = 9000
 
 const DefaultK = 2
 const DefaultNeighborRefreshTimeGap = time.Second // time.Minute
+const DefaultFirstJoinListenWaitingTime = 3 * time.Second
 
-const MethodJoin = 0
-const MethodRefresh = 1
-const MethodExit = 2
-const MethodReceiveGradient = 3 // Deal Local Training Result Reached.
-const MethodReceiveModel = 4    // Deal Blockchain Training Result Broadcast.
-const MethodCheckModel = 5      // Check Model Training Result.
+// Methods
+
+//const MethodJoin = 0
+//const UdpMethodRefresh = 1
+//const UdpMethodExit = 2
+//const MethodReceiveGradient = 3 // Deal Local Training Result Reached.
+//const MethodReceiveModel = 4    // Deal Blockchain Training Result Broadcast.
+//const MethodCheckModel = 5      // Check Model Training Result.
+
+// TCP Methods
+
+const (
+	MethodJoin            = iota
+	MethodReceiveGradient // Deal Local Training Result Reached.
+	MethodReceiveModel    // Deal Blockchain Training Result Broadcast.
+	MethodCheckModel      // Check Model Training Result.
+)
+
+// UDP Methods
+
+const (
+	UdpMethodRefresh = iota
+	UdpMethodExit
+)
 
 func GetDefaultPeerInfo() *PeerInfo {
 	return &PeerInfo{
@@ -50,16 +69,18 @@ func UnpackPackage(data []byte) *Package {
 	p := &Package{}
 	err := json.Unmarshal(data, p)
 	if nil != err {
-		log.Println(err)
+		log.Println("Unpack package json failed,", err)
+		log.Println(string(data))
 		return nil
 	}
 	return p
 }
 
 type Peer struct {
-	Info   *PeerInfo   `json:"info" yaml:"info"`
-	Router *PeerRouter `json:"router" yaml:"router"`
-	Tasks  *TasksList  `json:"tasks" yaml:"tasks"`
+	Info   *PeerInfo    `json:"info" yaml:"info"`
+	Router *PeerRouter  `json:"router" yaml:"router"`
+	Tasks  []*TasksList `json:"tasks" yaml:"tasks"`
+	alive  bool
 }
 
 type PeerInfo struct {
@@ -70,24 +91,26 @@ type PeerInfo struct {
 
 func (that *PeerInfo) HashString() string {
 	// TODO Add Random Id for Peers to Calculate Hash Value.
-	return hash.SHA512String([]byte(that.Address))
+	return hash.SHA512String([]byte(that.Address + strconv.Itoa(int(that.Port))))
+	//return hash.MD5String([]byte(that.Address + strconv.Itoa(int(that.Port))))
 }
 
 func UnpackPeerInfo(data []byte) *PeerInfo {
 	p := &PeerInfo{}
 	err := json.Unmarshal(data, p)
 	if nil != err {
-		log.Println(err)
+		log.Println("Unmarshal peerInfo failed,", err)
 		return nil
 	}
 	return p
 }
 
-func UnpackPeerInfoList(data []byte) []*PeerInfo {
-	var pList []*PeerInfo
+func UnpackPeerInfoList(data []byte) map[string]*PeerInfo {
+	var pList map[string]*PeerInfo
 	err := json.Unmarshal(data, &pList)
 	if nil != err {
-		log.Println(err)
+		log.Println(string(data))
+		log.Println("Unmarshal peerInfo list failed,", err)
 		return nil
 	}
 	return pList
@@ -112,7 +135,7 @@ type TasksList struct {
 	Reached   []*PeerInfo `json:"reached" yaml:"reached"`
 }
 
-func GeneratePeer(port uint, tcpPort uint) (*Peer, error) {
+func GeneratePeer(port, tcpPort uint) (*Peer, error) {
 	ipv4Address, err := ip.GetLocalIpv4Address()
 	if nil != err {
 		return nil, err
@@ -123,13 +146,16 @@ func GeneratePeer(port uint, tcpPort uint) (*Peer, error) {
 			Port:    port,
 			TcpPort: tcpPort,
 		},
+		Router: &PeerRouter{Neighbor: map[string]*PeerInfo{}},
+		Tasks:  []*TasksList{},
+		alive:  true,
 	}, nil
 }
 
 func StartOrigin() {
 	peer, err := GeneratePeer(DefaultPort, DefaultTcpPort)
 	if nil != err {
-		log.Println(err)
+		log.Println("Origin peer start failed,", err)
 		return
 	}
 	// TODO Judge Genesis Block.
@@ -148,29 +174,34 @@ func StartOrigin() {
 				// Send back Neighbor.
 				d, errIn := json.Marshal(peer.Router.Neighbor)
 				if nil != errIn {
-					log.Println(errIn)
+					log.Println("Method join send neighbor back failed,", errIn)
 					return
 				}
 				pack, errIn := json.Marshal(Package{
-					Type:    MethodRefresh,
+					Type:    UdpMethodRefresh,
 					Message: d,
 				})
 				err = peerInfo.UdpSendToPeer(pack)
 				if nil != err {
-					log.Println(err)
+					log.Println("Udp send failed,", err)
 					return
 				}
 				// Add Neighbor.
 				//peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
 				peer.Router.Neighbor[peerInfo.HashString()] = peerInfo
+				for _, v := range peer.Router.Neighbor {
+					log.Println(v)
+				}
+				log.Println(peerInfo, "join blockchain network.")
 			}
 			break
-		case MethodExit:
+		case UdpMethodExit:
 			neighbor := UnpackPeerInfo(p.Message)
 			if nil == neighbor {
 				break
 			}
 			delete(peer.Router.Neighbor, neighbor.HashString())
+			log.Println(neighbor, "exit blockchain network.")
 			break
 		default:
 			break
@@ -178,41 +209,43 @@ func StartOrigin() {
 	}, 8000)
 }
 
-// listen Background Information.
-func (that *Peer) listen() {
+// listenUdp Background Information.
+func (that *Peer) listenUdp() {
 	that.Info.UdpListen(func(data []byte) {
 		p := UnpackPackage(data)
 		if nil == p {
 			return
 		}
 		switch p.Type {
-		case MethodRefresh: // Receive Neighbor PeerInfo from Origin.
+		case UdpMethodRefresh: // Receive Neighbor PeerInfo from Origin.
 			neighbor := UnpackPeerInfoList(p.Message)
 			if nil == neighbor {
 				break
 			}
 			if nil != neighbor {
-				for i := 0; i < len(neighbor); i++ {
-					if nil == that.Router.Neighbor[neighbor[i].HashString()] {
-						that.Router.Neighbor[neighbor[i].HashString()] = neighbor[i]
+				for k, v := range neighbor {
+					if nil == that.Router.Neighbor[k] {
+						that.Router.Neighbor[k] = v
 					}
 				}
 			}
 			delete(that.Router.Neighbor, that.Info.HashString())
 			break
-		case MethodExit: // Remove Neighbor Exited.
+		case UdpMethodExit: // Remove Neighbor Exited.
 			neighbor := UnpackPeerInfo(p.Message)
 			if nil == neighbor {
 				break
 			}
 			delete(that.Router.Neighbor, neighbor.HashString())
 			break
-		case MethodReceiveGradient: // Receive Gradient Trained by Other Process.
-			// TODO File Path or Transfer Directly.
-			that.readGradient("")
-			// TODO Aggregate Gradient.
-			that.aggregateGradient().ReleaseModel()
-			break
+			/*
+				case MethodReceiveGradient: // Receive Gradient Trained by Other Process.
+					// TODO File Path or Transfer Directly.
+					that.readGradient("")
+					// TODO Aggregate Gradient.
+					that.aggregateGradient().ReleaseModel()
+					break
+			*/
 		case MethodReceiveModel:
 			// TODO Verify Received Model in Other Process.
 			that.receiveModel().verifyModel()
@@ -227,28 +260,49 @@ func (that *Peer) listen() {
 	})
 }
 
+func (that *Peer) listenTcp() {
+
+}
+
+func (that *Peer) sleep(t time.Duration) {
+	time.Sleep(t)
+}
+
 func (that *Peer) Join() {
 	// Run Callback Function on Background.
-	go that.listen()
+	go that.listenUdp()
+	time.Sleep(DefaultFirstJoinListenWaitingTime)
 	// Request Default Address.
 	defaultPeer := GetDefaultPeerInfo()
 	peerInfo, err := json.Marshal(that.Info)
 	if nil != err {
-		log.Println(err)
+		log.Println("Marshal local peerInfo for join network failed,", err)
 		return
 	}
-	err = defaultPeer.UdpSendToPeer(peerInfo)
+	p := &Package{
+		Type:    0,
+		Message: peerInfo,
+	}
+	pack, err := json.Marshal(p)
+	if nil != err {
+		log.Println("Marshal local package for join network failed,", err)
+		return
+	}
+	err = defaultPeer.UdpSendToPeer(pack)
 	if err != nil {
-		log.Println(err)
+		log.Println("Send local peerInfo to origin failed,", err)
 		return
 	}
+	defer that.Exit()
+	that.sleep(time.Second * 2)
+	that.Exit()
 	return
 }
 
 func (that *Peer) fetch() {
 	length := len(that.Router.Neighbor)
 	p := &Package{
-		Type:    MethodRefresh,
+		Type:    UdpMethodRefresh,
 		Message: nil,
 	}
 	pack, err := json.Marshal(p)
@@ -336,6 +390,7 @@ func (that *Peer) Try() {
 }
 
 func (that *Peer) Exit() error {
+	log.Println(that.Info, "exit.")
 	// Notice Neighbor.
 	d, err := json.Marshal(that.Info)
 	if nil != err {
@@ -343,7 +398,7 @@ func (that *Peer) Exit() error {
 		return err
 	}
 	p := &Package{
-		Type:    MethodExit,
+		Type:    UdpMethodExit,
 		Message: d,
 	}
 	pack, err := json.Marshal(p)
@@ -353,6 +408,6 @@ func (that *Peer) Exit() error {
 	}
 	that.UdpBroadcast(pack)
 	// Exit.
-	os.Exit(0)
+	//os.Exit(0)
 	return nil
 }
