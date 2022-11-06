@@ -19,7 +19,7 @@ func RunTestPeerLocal(t *testing.T, port, tcpPort uint) {
 		return
 	}
 	peer.Join()
-	//time.Sleep(time.Second * 5)
+	// time.Sleep(time.Second * 5)
 	for k, v := range peer.Router.Neighbor {
 		fmt.Println(k, v)
 	}

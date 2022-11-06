@@ -2,12 +2,13 @@ package DAG
 
 import (
 	"encoding/json"
-	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 )
 
 // TODO Change to Gossip Cluster https://www.jianshu.com/p/5198b869374a
@@ -19,22 +20,26 @@ import (
 
 // Timer https://seekload.blog.csdn.net/article/details/113155421
 
-const DefaultIP = "127.0.0.1"
-const DefaultPort = 8000
-const DefaultTcpPort = 9000
+const (
+	DefaultIP      = "127.0.0.1"
+	DefaultPort    = 8000
+	DefaultTcpPort = 9000
+)
 
-const DefaultK = 2
-const DefaultNeighborRefreshTimeGap = time.Second // time.Minute
-const DefaultFirstJoinListenWaitingTime = 3 * time.Second
+const (
+	DefaultK                          = 2
+	DefaultNeighborRefreshTimeGap     = time.Second // time.Minute
+	DefaultFirstJoinListenWaitingTime = 3 * time.Second
+)
 
 // Methods
 
-//const MethodJoin = 0
-//const UdpMethodRefresh = 1
-//const UdpMethodExit = 2
-//const MethodReceiveGradient = 3 // Deal Local Training Result Reached.
-//const MethodReceiveModel = 4    // Deal Blockchain Training Result Broadcast.
-//const MethodCheckModel = 5      // Check Model Training Result.
+// const MethodJoin = 0
+// const UdpMethodRefresh = 1
+// const UdpMethodExit = 2
+// const MethodReceiveGradient = 3 // Deal Local Training Result Reached.
+// const MethodReceiveModel = 4    // Deal Blockchain Training Result Broadcast.
+// const MethodCheckModel = 5      // Check Model Training Result.
 
 // TCP Methods
 
@@ -92,7 +97,7 @@ type PeerInfo struct {
 func (that *PeerInfo) HashString() string {
 	// TODO Add Random Id for Peers to Calculate Hash Value.
 	return hash.SHA512String([]byte(that.Address + strconv.Itoa(int(that.Port))))
-	//return hash.MD5String([]byte(that.Address + strconv.Itoa(int(that.Port))))
+	// return hash.MD5String([]byte(that.Address + strconv.Itoa(int(that.Port))))
 }
 
 func UnpackPeerInfo(data []byte) *PeerInfo {
@@ -125,7 +130,7 @@ func (that *PeerInfo) UdpSendToPeer(data []byte) error {
 }
 
 type PeerRouter struct {
-	//Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
+	// Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
 	Neighbor map[string]*PeerInfo `json:"neighbor" yaml:"neighbor"`
 }
 
@@ -187,7 +192,7 @@ func StartOrigin() {
 					return
 				}
 				// Add Neighbor.
-				//peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
+				// peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
 				peer.Router.Neighbor[peerInfo.HashString()] = peerInfo
 				for _, v := range peer.Router.Neighbor {
 					log.Println(v)
@@ -261,7 +266,6 @@ func (that *Peer) listenUdp() {
 }
 
 func (that *Peer) listenTcp() {
-
 }
 
 func (that *Peer) sleep(t time.Duration) {
@@ -408,6 +412,6 @@ func (that *Peer) Exit() error {
 	}
 	that.UdpBroadcast(pack)
 	// Exit.
-	//os.Exit(0)
+	// os.Exit(0)
 	return nil
 }
