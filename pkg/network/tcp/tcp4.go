@@ -60,7 +60,7 @@ func ListenInterruptableViaTcp4(ctx *context.Context, port uint, handler func(*n
 		log.Println(err)
 		return
 	}
-	loop:
+loop:
 	for true {
 		cli, errIn := connection.Accept()
 		if nil != errIn {
@@ -69,7 +69,7 @@ func ListenInterruptableViaTcp4(ctx *context.Context, port uint, handler func(*n
 		}
 		go handler(&cli)
 		select {
-		case <- (*ctx).Done():
+		case <-(*ctx).Done():
 			break loop
 		}
 	}

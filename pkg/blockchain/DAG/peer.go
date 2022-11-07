@@ -2,10 +2,11 @@ package DAG
 
 import (
 	"encoding/json"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 	"log"
 	"time"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 )
 
 // TODO Change to Gossip Cluster https://www.jianshu.com/p/5198b869374a
@@ -25,7 +26,7 @@ type Peer struct {
 }
 
 type PeerRouter struct {
-	//Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
+	// Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
 	Neighbor map[string]*PeerInfo `json:"neighbor" yaml:"neighbor"`
 }
 
@@ -87,7 +88,7 @@ func StartOrigin() {
 					return
 				}
 				// Add Neighbor.
-				//peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
+				// peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
 				peer.Router.Neighbor[peerInfo.HashString()] = peerInfo
 				for _, v := range peer.Router.Neighbor {
 					log.Println(v)
@@ -161,7 +162,6 @@ func (that *Peer) listenUdp() {
 }
 
 func (that *Peer) listenTcp() {
-
 }
 
 func (that *Peer) sleep(t time.Duration) {
@@ -308,6 +308,6 @@ func (that *Peer) Exit() error {
 	}
 	that.UdpBroadcast(pack)
 	// Exit.
-	//os.Exit(0)
+	// os.Exit(0)
 	return nil
 }
