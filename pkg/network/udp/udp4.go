@@ -52,6 +52,7 @@ func ListenInterruptableViaUdp4(ctx context.Context, handler func([]byte), port 
 	connection, err := net.ListenPacket("udp", fmt.Sprintf("0.0.0.0:%d", port))
 	if err != nil {
 		log.Println(err)
+		return
 	}
 	defer connection.Close()
 
