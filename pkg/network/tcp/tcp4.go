@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"strconv"
 )
 
 // https://studygolang.com/articles/9240
@@ -26,24 +27,24 @@ func WriteFuncTcp4(conn *net.Conn, data []byte) error {
 }
 
 func RequestViaTcp4(address string, port uint, handler func(*net.Conn)) {
-	connection, err := net.Dial("tcp", fmt.Sprintf("%s:%d", address, port))
-	defer connection.Close()
+	connection, err := net.Dial("tcp", net.JoinHostPort(address, strconv.Itoa(int(port))))
 	if nil != err {
 		log.Println(err)
 		return
 	}
+	defer connection.Close()
 	handler(&connection)
 }
 
-func ListenViaTcp4(port uint, handler func(*net.Conn)) {
+func ListenViaTcp4(handler func(*net.Conn), port uint) {
 	connection, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
-	defer connection.Close()
 	if nil != err {
 		log.Println(err)
 		return
 	}
+	defer connection.Close()
 
-	for true {
+	for {
 		cli, errIn := connection.Accept()
 		if nil != errIn {
 			log.Println(errIn)
@@ -53,23 +54,24 @@ func ListenViaTcp4(port uint, handler func(*net.Conn)) {
 	}
 }
 
-func ListenInterruptableViaTcp4(ctx *context.Context, port uint, handler func(*net.Conn)) {
+func ListenInterruptableViaTcp4(ctx *context.Context, handler func(*net.Conn), port uint) {
 	connection, err := net.Listen("tcp", fmt.Sprintf("0.0.0.0:%d", port))
-	defer connection.Close()
 	if nil != err {
 		log.Println(err)
 		return
 	}
+	defer connection.Close()
 	loop:
-	for true {
+	for {
 		cli, errIn := connection.Accept()
 		if nil != errIn {
 			log.Println(errIn)
 			continue
 		}
 		go handler(&cli)
+		c := *ctx
 		select {
-		case <- (*ctx).Done():
+		case <- c.Done():
 			break loop
 		}
 	}

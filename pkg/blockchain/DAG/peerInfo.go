@@ -3,8 +3,10 @@ package DAG
 import (
 	"encoding/json"
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/tcp"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 	"log"
+	"net"
 	"strconv"
 )
 
@@ -58,6 +60,7 @@ func (that *PeerInfo) UdpSendToPeer(data []byte) error {
 	return udp.SendViaUdp4(that.Address, that.Port, data)
 }
 
-func (that *PeerInfo) TcpListen() {
+func (that *PeerInfo) TcpListen(f func(conn *net.Conn)) {
 	// TODO Using context for interrupting.
+	tcp.ListenViaTcp4(f, that.TcpPort)
 }
