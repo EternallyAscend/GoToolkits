@@ -25,10 +25,10 @@ func SendViaUdp4(address string, port uint, msg []byte) error {
 
 func ListenViaUdp4(handler func([]byte), port uint) {
 	connection, err := net.ListenPacket("udp", fmt.Sprintf("0.0.0.0:%d", port))
+	defer connection.Close()
 	if err != nil {
 		log.Println(err)
 	}
-	defer connection.Close()
 
 	buffer := make([]byte, DefaultUdpBufferSize)
 	for true {
@@ -50,10 +50,11 @@ func ListenViaUdp4(handler func([]byte), port uint) {
 
 func ListenInterruptableViaUdp4(ctx context.Context, handler func([]byte), port uint) {
 	connection, err := net.ListenPacket("udp", fmt.Sprintf("0.0.0.0:%d", port))
+	defer connection.Close()
 	if err != nil {
 		log.Println(err)
+		return
 	}
-	defer connection.Close()
 
 	buffer := make([]byte, DefaultUdpBufferSize)
 	for true {
