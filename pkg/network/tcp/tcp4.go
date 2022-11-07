@@ -61,7 +61,7 @@ func ListenInterruptableViaTcp4(ctx *context.Context, handler func(*net.Conn), p
 		return
 	}
 	defer connection.Close()
-	loop:
+loop:
 	for {
 		cli, errIn := connection.Accept()
 		if nil != errIn {
@@ -71,7 +71,7 @@ func ListenInterruptableViaTcp4(ctx *context.Context, handler func(*net.Conn), p
 		go handler(&cli)
 		c := *ctx
 		select {
-		case <- c.Done():
+		case <-c.Done():
 			break loop
 		}
 	}

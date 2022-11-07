@@ -2,12 +2,13 @@ package DAG
 
 import (
 	"encoding/json"
-	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/tcp"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 	"log"
 	"net"
 	"strconv"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/tcp"
+	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 )
 
 func GetDefaultPeerInfo() *PeerInfo {
@@ -27,7 +28,7 @@ type PeerInfo struct {
 func (that *PeerInfo) HashString() string {
 	// TODO Add Random Id for Peers to Calculate Hash Value.
 	return hash.SHA512String([]byte(that.Address + strconv.Itoa(int(that.Port))))
-	//return hash.MD5String([]byte(that.Address + strconv.Itoa(int(that.Port))))
+	// return hash.MD5String([]byte(that.Address + strconv.Itoa(int(that.Port))))
 }
 
 func UnpackPeerInfo(data []byte) *PeerInfo {
