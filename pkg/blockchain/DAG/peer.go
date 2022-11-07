@@ -1,6 +1,7 @@
 package DAG
 
 import (
+	"context"
 	"encoding/json"
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
@@ -81,6 +82,7 @@ type Peer struct {
 	Router *PeerRouter  `json:"router" yaml:"router"`
 	Tasks  []*TasksList `json:"tasks" yaml:"tasks"`
 	alive  bool
+	ctx    *context.Context
 }
 
 type PeerInfo struct {
@@ -149,6 +151,7 @@ func GeneratePeer(port, tcpPort uint) (*Peer, error) {
 		Router: &PeerRouter{Neighbor: map[string]*PeerInfo{}},
 		Tasks:  []*TasksList{},
 		alive:  true,
+		ctx:    new(context.Context),
 	}, nil
 }
 
