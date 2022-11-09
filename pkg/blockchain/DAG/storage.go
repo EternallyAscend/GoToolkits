@@ -30,7 +30,32 @@ func (that *Blockchain) Verify() bool {
 	return true
 }
 
+type SingleHeader struct {
+
+}
+
+type SingleBody struct {
+
+}
+
+type SingleBlock struct {
+	Header *SingleHeader `json:"header" yaml:"header"`
+	Body *SingleBody `json:"body" yaml:"body"`
+	Next *SingleBlock `json:"next" yaml:"next"`
+}
+
 type SingleChain struct {
-	Genesis *Block `json:"genesis" yaml:"genesis"`
-	Latest  *Block `json:"latest" yaml:"latest"`
+	Genesis *SingleBlock `json:"genesis" yaml:"genesis"`
+	Latest  *SingleBlock `json:"latest" yaml:"latest"`
+}
+
+func (that *SingleChain) Append(head *SingleBlock) {
+	if nil == head {
+		return
+	}
+	p := head
+	for nil != p.Next {
+		p = p.Next
+	}
+	that.Latest = p
 }
