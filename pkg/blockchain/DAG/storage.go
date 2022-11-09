@@ -2,8 +2,7 @@ package DAG
 
 import "github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 
-type Header struct {
-}
+type Header struct{}
 
 type Body struct {
 	// TODO HE Verify Information.
@@ -30,18 +29,14 @@ func (that *Blockchain) Verify() bool {
 	return true
 }
 
-type SingleHeader struct {
+type SingleHeader struct{}
 
-}
-
-type SingleBody struct {
-
-}
+type SingleBody struct{}
 
 type SingleBlock struct {
 	Header *SingleHeader `json:"header" yaml:"header"`
-	Body *SingleBody `json:"body" yaml:"body"`
-	Next *SingleBlock `json:"next" yaml:"next"`
+	Body   *SingleBody   `json:"body" yaml:"body"`
+	Next   *SingleBlock  `json:"next" yaml:"next"`
 }
 
 type SingleChain struct {
