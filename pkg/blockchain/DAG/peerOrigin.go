@@ -2,8 +2,9 @@ package DAG
 
 import (
 	"encoding/json"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 	"log"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/network/udp"
 )
 
 func StartOrigin() {
@@ -41,7 +42,7 @@ func StartOrigin() {
 					return
 				}
 				// Add Neighbor.
-				//peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
+				// peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
 				peer.Router.Neighbor[peerInfo.HashString()] = peerInfo
 				for _, v := range peer.Router.Neighbor {
 					log.Println(v)

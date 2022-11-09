@@ -1,8 +1,9 @@
 package DAG
 
 import (
-	"github.com/EternallyAscend/GoToolkits/pkg/network/tcp"
 	"net"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/network/tcp"
 )
 
 func (that *Peer) TcpFunc() {}
@@ -45,7 +46,6 @@ func (that *Peer) listenTcp() {
 				}
 		*/
 	}, that.Info.TcpPort)
-
 }
 
 func (that *Peer) TcpBroadcast() {

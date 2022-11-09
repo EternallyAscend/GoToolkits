@@ -2,9 +2,10 @@ package DAG
 
 import (
 	"context"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
 	"log"
 	"time"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
 )
 
 // TODO Change to Gossip Cluster https://www.jianshu.com/p/5198b869374a
@@ -25,7 +26,7 @@ type Peer struct {
 }
 
 type PeerRouter struct {
-	//Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
+	// Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
 	Neighbor map[string]*PeerInfo `json:"neighbor" yaml:"neighbor"`
 }
 
