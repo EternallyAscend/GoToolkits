@@ -2,8 +2,7 @@ package DAG
 
 import "github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 
-type Header struct {
-}
+type Header struct{}
 
 type Body struct {
 	// TODO HE Verify Information.
