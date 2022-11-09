@@ -26,8 +26,8 @@ type Blockchain struct {
 	Bases []*Block `json:"bases" yaml:"bases"`
 }
 
-func (that *Blockchain) Fetch() {
-
+func (that *Blockchain) Verify() bool {
+	return true
 }
 
 type SingleChain struct {

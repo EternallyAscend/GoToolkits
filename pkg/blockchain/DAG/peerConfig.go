@@ -13,20 +13,24 @@ const DefaultFirstJoinListenWaitingTime = 3 * time.Second
 
 // Methods
 
-//const MethodJoin = 0
+//const TcpMethodJoin = 0
 //const UdpMethodRefresh = 1
 //const UdpMethodExit = 2
 //const MethodReceiveGradient = 3 // Deal Local Training Result Reached.
-//const MethodReceiveModel = 4    // Deal Blockchain Training Result Broadcast.
-//const MethodCheckModel = 5      // Check Model Training Result.
+//const TcpMethodReceiveModel = 4    // Deal Blockchain Training Result Broadcast.
+//const TcpMethodCheckModel = 5      // Check Model Training Result.
 
 // TCP Methods
 
 const (
-	MethodJoin            = iota
+	TcpMethodJoin         = iota
 	MethodReceiveGradient // Deal Local Training Result Reached.
-	MethodReceiveModel    // Deal Blockchain Training Result Broadcast.
-	MethodCheckModel      // Check Model Training Result.
+	TcpMethodReceiveModel // Deal Blockchain Training Result Broadcast.
+	TcpMethodCheckModel   // Check Model Training Result.
+	TcpMethodReleaseGradient
+	TcpMethodReleaseModel
+	TcpMethodGetModel
+	TcpMethodGetModelScore
 )
 
 // UDP Methods
