@@ -18,9 +18,8 @@ import (
 
 type Peer struct {
 	Info   *PeerInfo    `json:"info" yaml:"info"`
-	Router *PeerRouter  `json:"router" yaml:"router"`
-	Tasks  []*TasksList `json:"tasks" yaml:"tasks"`
-	alive  bool
+	Router *PeerRouter `json:"router" yaml:"router"`
+	Tasks  []*Task     `json:"tasks" yaml:"tasks"`
 	ctx    *context.Context
 }
 
@@ -41,8 +40,7 @@ func GeneratePeer(port, tcpPort uint) (*Peer, error) {
 			TcpPort: tcpPort,
 		},
 		Router: &PeerRouter{Neighbor: map[string]*PeerInfo{}},
-		Tasks:  []*TasksList{},
-		alive:  true,
+		Tasks:  []*Task{},
 		ctx:    new(context.Context),
 	}, nil
 }
@@ -68,7 +66,6 @@ func (that *Peer) Exit() {
 	// Notice Neighbor.
 	that.exit()
 	// Exit.
-	that.alive = false
 	c := *(that.ctx)
 	c.Done()
 }

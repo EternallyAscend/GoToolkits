@@ -19,6 +19,7 @@ func (that *Peer) listenTcp() {
 		// TODO Listen for Services.
 		switch header.Type {
 		case TcpMethodJoin:
+			// TODO Send Neighbor Information Back.
 			break
 		case TcpMethodReceiveModel:
 			break

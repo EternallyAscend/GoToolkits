@@ -1,12 +1,19 @@
 package DAG
 
-import "github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
+import (
+	"encoding/json"
+	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
+	"log"
+)
 
 type Header struct {
+	// TODO Blockchain Hash.
+	// TODO HE GH Arguments.
 }
 
 type Body struct {
 	// TODO HE Verify Information.
+	// TODO Compression Gradients.
 }
 
 func (that *Body) HashString() string {
@@ -31,17 +38,46 @@ func (that *Blockchain) Verify() bool {
 }
 
 type SingleHeader struct {
-
+	SHA512 []byte `json:"sha512" yaml:"sha512"`
 }
 
 type SingleBody struct {
 
 }
 
+func (that *SingleBody) GenerateHeader() *SingleHeader {
+	body, err := json.Marshal(that)
+	if nil != err {
+		log.Println(err)
+		return nil
+	}
+	return &SingleHeader{
+		SHA512: hash.SHA512(body),
+	}
+}
+
 type SingleBlock struct {
 	Header *SingleHeader `json:"header" yaml:"header"`
 	Body *SingleBody `json:"body" yaml:"body"`
 	Next *SingleBlock `json:"next" yaml:"next"`
+}
+
+func (that *SingleBlock) Verify() bool {
+	body, err := json.Marshal(that.Body)
+	if nil != err {
+		log.Println(err)
+		return false
+	}
+	bodyHash := hash.SHA512(body)
+	if len(bodyHash) != len(that.Header.SHA512) {
+		return false
+	}
+	for i := range bodyHash {
+		if bodyHash[i] != that.Header.SHA512[i] {
+			return false
+		}
+	}
+	return true
 }
 
 type SingleChain struct {
@@ -58,4 +94,18 @@ func (that *SingleChain) Append(head *SingleBlock) {
 		p = p.Next
 	}
 	that.Latest = p
+}
+
+func (that *SingleChain) Verify() bool {
+	return that.VerifyFrom(that.Genesis)
+}
+
+func (that *SingleChain) VerifyFrom(block *SingleBlock) bool {
+	for nil != block.Next {
+		block = block.Next
+		if !block.Verify() {
+			return false
+		}
+	}
+	return true
 }
