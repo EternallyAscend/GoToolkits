@@ -20,6 +20,7 @@ func (that *Peer) listenTcp() {
 		// TODO Listen for Services.
 		switch header.Type {
 		case TcpMethodJoin:
+			// TODO Send Neighbor Information Back.
 			peerInfo := UnpackPeerInfo(pack)
 			if nil == peerInfo {
 				return
