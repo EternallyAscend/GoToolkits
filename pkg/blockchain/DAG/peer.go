@@ -2,9 +2,10 @@ package DAG
 
 import (
 	"context"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
 	"log"
 	"time"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/network/ip"
 )
 
 // TODO Change to Gossip Cluster https://www.jianshu.com/p/5198b869374a
@@ -17,14 +18,14 @@ import (
 // Timer https://seekload.blog.csdn.net/article/details/113155421
 
 type Peer struct {
-	Info   *PeerInfo    `json:"info" yaml:"info"`
+	Info   *PeerInfo   `json:"info" yaml:"info"`
 	Router *PeerRouter `json:"router" yaml:"router"`
 	Tasks  []*Task     `json:"tasks" yaml:"tasks"`
 	ctx    *context.Context
 }
 
 type PeerRouter struct {
-	//Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
+	// Neighbor []*PeerInfo `json:"neighbor" yaml:"neighbor"`
 	Neighbor map[string]*PeerInfo `json:"neighbor" yaml:"neighbor"`
 }
 

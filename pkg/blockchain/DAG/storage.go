@@ -2,8 +2,9 @@ package DAG
 
 import (
 	"encoding/json"
-	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 	"log"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 )
 
 type Header struct {
@@ -41,9 +42,7 @@ type SingleHeader struct {
 	SHA512 []byte `json:"sha512" yaml:"sha512"`
 }
 
-type SingleBody struct {
-
-}
+type SingleBody struct{}
 
 func (that *SingleBody) GenerateHeader() *SingleHeader {
 	body, err := json.Marshal(that)
@@ -58,8 +57,8 @@ func (that *SingleBody) GenerateHeader() *SingleHeader {
 
 type SingleBlock struct {
 	Header *SingleHeader `json:"header" yaml:"header"`
-	Body *SingleBody `json:"body" yaml:"body"`
-	Next *SingleBlock `json:"next" yaml:"next"`
+	Body   *SingleBody   `json:"body" yaml:"body"`
+	Next   *SingleBlock  `json:"next" yaml:"next"`
 }
 
 func (that *SingleBlock) Verify() bool {

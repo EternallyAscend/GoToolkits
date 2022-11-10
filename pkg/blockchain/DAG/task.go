@@ -7,5 +7,3 @@ type Task struct {
 	Timestamp time.Time   `json:"timestamp" yaml:"timestamp"`
 	Reached   []*PeerInfo `json:"reached" yaml:"reached"`
 }
-
-
