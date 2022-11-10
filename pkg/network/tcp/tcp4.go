@@ -26,14 +26,14 @@ func WriteFuncTcp4(conn *net.Conn, data []byte) error {
 	return err
 }
 
-func RequestViaTcp4(address string, port uint, handler func(*net.Conn)) {
+func RequestViaTcp4(address string, port uint, handler func(*net.Conn, []byte), data []byte) {
 	connection, err := net.Dial("tcp", net.JoinHostPort(address, strconv.Itoa(int(port))))
 	if nil != err {
 		log.Println(err)
 		return
 	}
 	defer connection.Close()
-	handler(&connection)
+	handler(&connection, data)
 }
 
 func ListenViaTcp4(handler func(*net.Conn), port uint) {
@@ -61,7 +61,7 @@ func ListenInterruptableViaTcp4(ctx *context.Context, handler func(*net.Conn), p
 		return
 	}
 	defer connection.Close()
-	loop:
+loop:
 	for {
 		cli, errIn := connection.Accept()
 		if nil != errIn {
@@ -71,7 +71,7 @@ func ListenInterruptableViaTcp4(ctx *context.Context, handler func(*net.Conn), p
 		go handler(&cli)
 		c := *ctx
 		select {
-		case <- c.Done():
+		case <-c.Done():
 			break loop
 		}
 	}

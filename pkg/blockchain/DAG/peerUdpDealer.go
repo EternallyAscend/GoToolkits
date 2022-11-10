@@ -49,22 +49,6 @@ func (that *Peer) listenUdp() {
 			}
 			delete(that.Router.Neighbor, neighbor.HashString())
 			break
-			/*
-				case MethodReceiveGradient: // Receive Gradient Trained by Other Process.
-					// TODO File Path or Transfer Directly.
-					that.readGradient("")
-					// TODO Aggregate Gradient.
-					that.aggregateGradient().ReleaseModel()
-					break
-			*/
-		case TcpMethodReceiveModel:
-			// TODO Verify Received Model in Other Process.
-			that.receiveModel().verifyModel()
-			break
-		case TcpMethodCheckModel:
-			// TODO Try Model Correction.
-			that.Try()
-			break
 		default:
 			break
 		}
@@ -79,11 +63,11 @@ func (that *Peer) join() {
 		log.Println("Marshal local peerInfo for join network failed,", err)
 		return
 	}
-	p := &Package{
-		Type:    TcpMethodJoin,
-		Message: peerInfo,
+	header := PackageTcpHeader{
+		Type:   TcpMethodJoin,
+		Length: uint(len(peerInfo)),
 	}
-	pack, err := json.Marshal(p)
+	pack, err := json.Marshal(header)
 	if nil != err {
 		log.Println("Marshal local package for join network failed,", err)
 		return

@@ -61,9 +61,9 @@ func (that *PeerInfo) UdpSendToPeer(data []byte) error {
 	return udp.SendViaUdp4(that.Address, that.Port, data)
 }
 
-func (that *PeerInfo) TcpSendToPeer(data []byte) error {
-	//return tcp.RequestViaTcp4(that.Address, that.Port, )
-	return nil
+func (that *PeerInfo) TcpCommunicateWithPeer(data []byte) {
+
+	tcp.RequestViaTcp4(that.Address, that.Port, SenderTcpFunc, data)
 }
 
 func (that *PeerInfo) TcpListen(f func(conn *net.Conn)) {

@@ -51,6 +51,11 @@ func (that *Peer) sleep(t time.Duration) {
 	time.Sleep(t)
 }
 
+func (that *Peer) addNeighbor(peerInfo *PeerInfo) {
+	// TODO Verify if Key is nil before Adding. Optional.
+	that.Router.Neighbor[peerInfo.HashString()] = peerInfo
+}
+
 func (that *Peer) Join() {
 	defer that.Exit()
 	// Run Callback Function on Background.

@@ -31,6 +31,7 @@ const (
 	TcpMethodReleaseModel
 	TcpMethodGetModel
 	TcpMethodGetModelScore
+	TcpMethodExchangeGH
 )
 
 // UDP Methods

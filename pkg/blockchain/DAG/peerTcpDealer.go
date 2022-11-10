@@ -5,10 +5,9 @@ import (
 	"net"
 )
 
-func (that *Peer) TcpFunc() {}
-
 func (that *Peer) listenTcp() {
 	tcp.ListenInterruptableViaTcp4(that.ctx, func(conn *net.Conn) {
+		defer (*conn).Close()
 		// TODO Peer Reliable Connection.
 		headerByte := make([]byte, DefaultPackageTcpHeaderSize)
 		(*conn).Read(headerByte)
@@ -16,45 +15,52 @@ func (that *Peer) listenTcp() {
 		if nil == header {
 			return
 		}
+		pack := make([]byte, header.Length)
+		(*conn).Read(pack)
 		// TODO Listen for Services.
 		switch header.Type {
 		case TcpMethodJoin:
+			peerInfo := UnpackPeerInfo(pack)
+			if nil == peerInfo {
+				return
+			}
+			// Send.
+
+			that.addNeighbor(peerInfo)
 			break
-		case TcpMethodReceiveModel:
+		case TcpMethodExchangeGH:
+			// TODO Next.
+			break
+		case TcpMethodReleaseGradient: // Receive Gradient Trained by Other Process.
+			// TODO File Path or Transfer Directly.
+			that.readGradient("")
+			// TODO Aggregate Gradient.
+			that.aggregateGradient().ReleaseModel()
+			break
+		case TcpMethodReleaseModel:
+			// TODO Verify Received Model in Other Process.
+			that.receiveModel().verifyModel()
+			break
+		case TcpMethodGetModel:
+			break
+		case TcpMethodGetModelScore:
 			break
 		case TcpMethodCheckModel:
+			// TODO Try Model Correction.
+			that.Try()
 			break
 		}
-
-		/*
-			loop:
-				for {
-					// Header.
-					headerByte := make([]byte, DefaultPackageTcpHeaderSize)
-					(*conn).Read(headerByte)
-					header := UnpackPackageTcpHeader(headerByte)
-					if nil == header {
-						(*conn).Close()
-						continue
-					}
-					c := *that.ctx
-					select {
-					case <-c.Done():
-						break loop
-					}
-				}
-		*/
 	}, that.Info.TcpPort)
 
 }
 
 func (that *Peer) TcpBroadcast() {
 	for _, v := range that.Router.Neighbor {
-		v.TcpSendToPeer(nil)
+		v.TcpCommunicateWithPeer(nil)
 	}
 }
 
-func ServerTcpFunc(conn *net.Conn) {
+func SenderTcpFunc(conn *net.Conn, data []byte) {
 	connection := *conn
 	connection.Read([]byte{})
 }
