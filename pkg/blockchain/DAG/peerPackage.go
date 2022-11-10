@@ -24,7 +24,7 @@ func UnpackPackage(data []byte) *Package {
 func TransferDataToPackage(data []byte, typeCode uint) ([]byte, error) {
 	p := &Package{
 		Type: typeCode,
-		//Length:  uint(len(data)),
+		// Length:  uint(len(data)),
 		Message: data,
 	}
 	return json.Marshal(p)

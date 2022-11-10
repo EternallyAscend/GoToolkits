@@ -5,10 +5,11 @@ import (
 	"bytes"
 	"encoding/binary"
 	"encoding/json"
-	"github.com/EternallyAscend/GoToolkits/pkg/network/tcp"
 	"log"
 	"net"
 	"time"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/network/tcp"
 )
 
 func EncodeTcpMessage(data []byte) []byte {
@@ -73,7 +74,7 @@ func (that *Peer) listenTcp() {
 			// Udp Transfer
 			udpPack := &Package{
 				Type: UdpMethodReceive,
-				//Length:  uint(len(peerListByte)),
+				// Length:  uint(len(peerListByte)),
 				Message: peerListByte,
 			}
 			udpPackByte, errIn := json.Marshal(udpPack)
@@ -108,7 +109,6 @@ func (that *Peer) listenTcp() {
 			break
 		}
 	}, that.Info.TcpPort)
-
 }
 
 func (that *Peer) TcpBroadcast(method uint, data []byte) {
