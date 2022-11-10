@@ -17,10 +17,10 @@ import (
 // Timer https://seekload.blog.csdn.net/article/details/113155421
 
 type Peer struct {
-	Info   *PeerInfo    `json:"info" yaml:"info"`
+	Info   *PeerInfo   `json:"info" yaml:"info"`
 	Router *PeerRouter `json:"router" yaml:"router"`
 	Tasks  []*Task     `json:"tasks" yaml:"tasks"`
-	ctx    *context.Context
+	ctx    context.Context
 }
 
 type PeerRouter struct {
@@ -41,8 +41,27 @@ func GeneratePeer(port, tcpPort uint) (*Peer, error) {
 		},
 		Router: &PeerRouter{Neighbor: map[string]*PeerInfo{}},
 		Tasks:  []*Task{},
-		ctx:    new(context.Context),
+		ctx:    context.Background(),
 	}, nil
+}
+
+// setBackground Setting Background Refresh Method and so on.
+func (that *Peer) setBackground() {
+	ticker := time.NewTicker(DefaultRefreshTime)
+	ch := make(chan int)
+	go func() {
+	loop:
+		for {
+			// TODO Background Functions.
+			select {
+			case <-that.ctx.Done():
+				break loop
+			}
+		}
+		ticker.Stop()
+		ch <- 0
+	}()
+	<-ch
 }
 
 func (that *Peer) sleep(t time.Duration) {
@@ -50,8 +69,10 @@ func (that *Peer) sleep(t time.Duration) {
 }
 
 func (that *Peer) addNeighbor(peerInfo *PeerInfo) {
-	// TODO Verify if Key is nil before Adding. Optional.
-	that.Router.Neighbor[peerInfo.HashString()] = peerInfo
+	// Verify if Key is nil before Adding.
+	if nil == that.Router.Neighbor[peerInfo.HashString()] {
+		that.Router.Neighbor[peerInfo.HashString()] = peerInfo
+	}
 }
 
 func (that *Peer) Join() {
@@ -61,8 +82,9 @@ func (that *Peer) Join() {
 	go that.listenTcp()
 	time.Sleep(DefaultFirstJoinListenWaitingTime)
 	that.join()
-	// TODO Add Timer for Refresh.
-	that.sleep(time.Second * 2)
+	// TODO Add Timer for Refresh and so on.
+	//that.setBackground()
+	that.fetch()
 	return
 }
 
@@ -71,6 +93,5 @@ func (that *Peer) Exit() {
 	// Notice Neighbor.
 	that.exit()
 	// Exit.
-	c := *(that.ctx)
-	c.Done()
+	that.ctx.Done()
 }

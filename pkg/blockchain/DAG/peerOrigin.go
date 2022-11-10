@@ -14,13 +14,13 @@ func StartOrigin() {
 	}
 	// TODO Judge Genesis Block.
 	// If genesis block is existed this process will read and continue, otherwise create.
-	udp.ListenViaUdp4(func(data []byte) {
+	go udp.ListenViaUdp4(func(data []byte) {
 		p := UnpackPackage(data)
 		if nil == p {
 			return
 		}
 		switch p.Type {
-		case TcpMethodJoin: // Add Peer Into Network.
+		case UdpMethodRefresh:
 			peerInfo := UnpackPeerInfo(p.Message)
 			if nil == peerInfo {
 				return
@@ -32,21 +32,17 @@ func StartOrigin() {
 					return
 				}
 				pack, errIn := json.Marshal(Package{
-					Type:    UdpMethodRefresh,
+					Type:    UdpMethodReceive,
 					Message: d,
 				})
-				err = peerInfo.UdpSendToPeer(pack)
-				if nil != err {
-					log.Println("Udp send failed,", err)
-					return
-				}
+				go peerInfo.UdpSendToPeer(pack)
 				// Add Neighbor.
 				//peer.Router.Neighbor = append(peer.Router.Neighbor, peerInfo)
-				peer.Router.Neighbor[peerInfo.HashString()] = peerInfo
-				for _, v := range peer.Router.Neighbor {
-					log.Println(v)
-				}
-				log.Println(peerInfo, "join blockchain network.")
+				peer.addNeighbor(peerInfo)
+				//for _, v := range peer.Router.Neighbor {
+				//	log.Println(v)
+				//}
+				log.Println(peerInfo, "ask for blockchain network.")
 			}
 			break
 		case UdpMethodExit:
@@ -61,4 +57,9 @@ func StartOrigin() {
 			break
 		}
 	}, DefaultPort)
+	peer.listenTcp()
+}
+
+func OriginListenUdp4() {
+
 }

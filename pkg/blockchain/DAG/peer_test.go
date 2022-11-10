@@ -47,3 +47,11 @@ func TestPeer2_Join(t *testing.T) {
 func TestPeer3_Join(t *testing.T) {
 	RunTestPeerLocal(t, 8003, 9003)
 }
+
+func TestPeer4_Join(t *testing.T) {
+	RunTestPeerLocal(t, 8004, 9004)
+}
+
+func TestPeer5_Join(t *testing.T) {
+	RunTestPeerLocal(t, 8005, 9005)
+}

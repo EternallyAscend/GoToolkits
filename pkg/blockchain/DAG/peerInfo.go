@@ -52,7 +52,7 @@ func UnpackPeerInfoList(data []byte) map[string]*PeerInfo {
 	return pList
 }
 
-func (that *PeerInfo) UdpListen(f func([]byte), ctx *context.Context) {
+func (that *PeerInfo) UdpListen(f func([]byte), ctx context.Context) {
 	// TODO Using context for interrupting.
 	udp.ListenViaUdp4(f, that.Port)
 }
@@ -61,9 +61,8 @@ func (that *PeerInfo) UdpSendToPeer(data []byte) error {
 	return udp.SendViaUdp4(that.Address, that.Port, data)
 }
 
-func (that *PeerInfo) TcpCommunicateWithPeer(data []byte) {
-
-	tcp.RequestViaTcp4(that.Address, that.Port, SenderTcpFunc, data)
+func (that *PeerInfo) TcpCommunicateWithPeer(method uint, data []byte) {
+	tcp.RequestViaTcp4(that.Address, that.TcpPort, SenderTcpFunc, method, data)
 }
 
 func (that *PeerInfo) TcpListen(f func(conn *net.Conn)) {

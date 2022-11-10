@@ -4,12 +4,15 @@ import "time"
 
 // DefaultIP Using 127.0.0.1 for local test network.
 const DefaultIP = "127.0.0.1"
-const DefaultPort = 8000
+const DefaultPort = 8002
 const DefaultTcpPort = 9000
 
 const DefaultK = 2
 const DefaultNeighborRefreshTimeGap = time.Second // time.Minute
 const DefaultFirstJoinListenWaitingTime = 3 * time.Second
+const DefaultRefreshTime = 5 * time.Second
+
+const DefaultTcpLength = 8 // int64
 
 // Methods
 
@@ -37,6 +40,7 @@ const (
 // UDP Methods
 
 const (
-	UdpMethodRefresh = iota
-	UdpMethodExit
+	UdpMethodRefresh = iota // Request Neighbor PeerInfo.
+	UdpMethodReceive        // Receive Neighbor PeerInfo from other Peers.
+	UdpMethodExit           // Remove Neighbor Exited.
 )

@@ -1,32 +1,88 @@
 package DAG
 
 import (
+	"bufio"
+	"bytes"
+	"encoding/binary"
+	"encoding/json"
 	"github.com/EternallyAscend/GoToolkits/pkg/network/tcp"
+	"log"
 	"net"
+	"time"
 )
+
+func EncodeTcpMessage(data []byte) []byte {
+	length := int64(len(data))
+	pkg := new(bytes.Buffer)
+	err := binary.Write(pkg, binary.BigEndian, length)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	err = binary.Write(pkg, binary.BigEndian, data)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	return pkg.Bytes()
+}
 
 func (that *Peer) listenTcp() {
 	tcp.ListenInterruptableViaTcp4(that.ctx, func(conn *net.Conn) {
 		defer (*conn).Close()
-		// TODO Peer Reliable Connection.
-		headerByte := make([]byte, DefaultPackageTcpHeaderSize)
-		(*conn).Read(headerByte)
-		header := UnpackPackageTcpHeader(headerByte)
-		if nil == header {
+		// Reader.
+		reader := bufio.NewReader(*conn)
+		peek, err := reader.Peek(DefaultTcpLength)
+		if nil != err {
+			log.Println(err)
 			return
 		}
-		pack := make([]byte, header.Length)
-		(*conn).Read(pack)
+
+		// TODO Peer Reliable Connection.
+		buffer := bytes.NewBuffer(peek)
+		var length int64
+		binary.Read(buffer, binary.BigEndian, &length)
+		for int64(reader.Buffered()) < length+DefaultTcpLength {
+			// TODO Last 存在优化可能
+			time.Sleep(time.Second)
+		}
+		packByte := make([]byte, length+DefaultTcpLength)
+		_, err = reader.Read(packByte)
+		if nil != err {
+			log.Println(err)
+			return
+		}
+		// Unpack Package.
+		pack := UnpackPackage(packByte[DefaultTcpLength:])
 		// TODO Listen for Services.
-		switch header.Type {
+		switch pack.Type {
 		case TcpMethodJoin:
-			// TODO Send Neighbor Information Back.
-			peerInfo := UnpackPeerInfo(pack)
+			// Unpack Peer Information.
+			peerInfo := UnpackPeerInfo(pack.Message)
 			if nil == peerInfo {
 				return
 			}
-			// Send.
-
+			that.addNeighbor(peerInfo)
+			// Send Neighbor Information Back.
+			peerListByte, errIn := json.Marshal(that.Router.Neighbor)
+			if nil != errIn {
+				log.Println(errIn)
+				return
+			}
+			//(*conn).Write(peerListByte)
+			// Udp Transfer
+			udpPack := &Package{
+				Type: UdpMethodReceive,
+				//Length:  uint(len(peerListByte)),
+				Message: peerListByte,
+			}
+			udpPackByte, errIn := json.Marshal(udpPack)
+			if nil != errIn {
+				log.Println(errIn)
+				return
+			}
+			go peerInfo.UdpSendToPeer(udpPackByte)
+			// Add Peer to Neighbor List.
 			that.addNeighbor(peerInfo)
 			break
 		case TcpMethodExchangeGH:
@@ -55,15 +111,25 @@ func (that *Peer) listenTcp() {
 
 }
 
-func (that *Peer) TcpBroadcast() {
+func (that *Peer) TcpBroadcast(method uint, data []byte) {
 	for _, v := range that.Router.Neighbor {
-		v.TcpCommunicateWithPeer(nil)
+		v.TcpCommunicateWithPeer(method, data)
 	}
 }
 
-func SenderTcpFunc(conn *net.Conn, data []byte) {
+func SenderTcpFunc(conn *net.Conn, method uint, data []byte) {
 	connection := *conn
-	connection.Read([]byte{})
+	header := &PackageTcpHeader{
+		Type:   method,
+		Length: uint(len(data)),
+	}
+	headerByte, err := json.Marshal(header)
+	if nil != err {
+		log.Println(err)
+		return
+	}
+	connection.Write(headerByte)
+	connection.Write(data)
 }
 
 func (that *Peer) releaseModel() {}

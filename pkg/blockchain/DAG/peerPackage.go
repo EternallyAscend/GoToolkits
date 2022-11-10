@@ -7,7 +7,6 @@ import (
 
 type Package struct {
 	Type    uint   `json:"type" yaml:"type"`
-	Length  uint   `json:"length" yaml:"length"`
 	Message []byte `json:"message" yaml:"message"`
 }
 
@@ -24,8 +23,8 @@ func UnpackPackage(data []byte) *Package {
 
 func TransferDataToPackage(data []byte, typeCode uint) ([]byte, error) {
 	p := &Package{
-		Type:    typeCode,
-		Length:  uint(len(data)),
+		Type: typeCode,
+		//Length:  uint(len(data)),
 		Message: data,
 	}
 	return json.Marshal(p)
