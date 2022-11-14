@@ -14,6 +14,7 @@ func StartOrigin() {
 	}
 	// TODO Judge Genesis Block.
 	// If genesis block is existed this process will read and continue, otherwise create.
+	go OriginListenUdp4(peer)
 	peer.listenTcp()
 }
 
