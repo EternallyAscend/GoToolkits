@@ -52,7 +52,7 @@ func (that *Peer) setBackground() {
 	go func() {
 	loop:
 		for {
-			// TODO Background Functions.
+			// TODO [Unused] Background Functions.
 			select {
 			case <-that.ctx.Done():
 				break loop
@@ -82,8 +82,7 @@ func (that *Peer) Join() {
 	go that.listenTcp()
 	time.Sleep(DefaultFirstJoinListenWaitingTime)
 	that.join()
-	// TODO Add Timer for Refresh and so on.
-	//that.setBackground()
+	// Add Timer for Refresh and so on.
 	that.fetch()
 	return
 }

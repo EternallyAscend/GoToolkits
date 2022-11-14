@@ -4,11 +4,11 @@ import "time"
 
 // DefaultIP Using 127.0.0.1 for local test network.
 const DefaultIP = "127.0.0.1"
-const DefaultPort = 8002
+const DefaultPort = 8000
 const DefaultTcpPort = 9000
 
 const DefaultK = 2
-const DefaultNeighborRefreshTimeGap = time.Second // time.Minute
+const DefaultNeighborRefreshTimeGap = 5 * time.Second // time.Minute
 const DefaultFirstJoinListenWaitingTime = 3 * time.Second
 const DefaultRefreshTime = 5 * time.Second
 

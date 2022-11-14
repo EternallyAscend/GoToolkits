@@ -7,7 +7,7 @@ import (
 )
 
 func TestListenViaTcp4(t *testing.T) {
-	ListenViaTcp4(9000, func(conn *net.Conn) {
+	ListenViaTcp4(func(conn *net.Conn) {
 		data := make([]byte, 1024)
 		length, err := (*conn).Read(data)
 		if nil != err {
@@ -17,12 +17,13 @@ func TestListenViaTcp4(t *testing.T) {
 		log.Println(string(data[0:length]))
 		log.Println(string(data))
 		WriteFuncTcp4(conn, []byte("Huawei."))
-	})
+	}, 9000)
 }
 
 func TestRequestViaTcp4(t *testing.T) {
-	RequestViaTcp4("127.0.0.1", 9000, func(conn *net.Conn) {
-		_, err := (*conn).Write([]byte("Message."))
+	data := []byte("Message.")
+	RequestViaTcp4("127.0.0.1", 9000, func(conn *net.Conn, port uint, data []byte) {
+		_, err := (*conn).Write(data)
 		if err != nil {
 			log.Println(err)
 			return
@@ -33,5 +34,5 @@ func TestRequestViaTcp4(t *testing.T) {
 			return
 		}
 		log.Println(string(d))
-	})
+	}, 0, data)
 }

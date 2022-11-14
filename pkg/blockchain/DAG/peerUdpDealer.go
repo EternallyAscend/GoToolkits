@@ -29,6 +29,7 @@ func (that *Peer) listenUdp() {
 		}
 		switch p.Type {
 		case UdpMethodRefresh:
+			log.Println("UdpMethodRefresh")
 			neighbor := UnpackPeerInfo(p.Message)
 			if nil == neighbor {
 				break
@@ -51,6 +52,7 @@ func (that *Peer) listenUdp() {
 			go neighbor.UdpSendToPeer(packByte)
 			break
 		case UdpMethodReceive:
+			log.Println("UdpMethodReceive")
 			neighbor := UnpackPeerInfoList(p.Message)
 			if nil == neighbor {
 				break
@@ -63,6 +65,7 @@ func (that *Peer) listenUdp() {
 			//delete(that.Router.Neighbor, that.Info.HashString())
 			break
 		case UdpMethodExit:
+			log.Println("UdpMethodExit")
 			neighbor := UnpackPeerInfo(p.Message)
 			if nil == neighbor {
 				break
@@ -137,7 +140,7 @@ loop:
 				err = v.UdpSendToPeer(pack)
 				if nil != err {
 					// TODO Timeout and Remove Neighbor.
-					log.Println(err)
+					log.Println("Fetch Request Send Error:", err)
 					continue
 				}
 				// Stop this Process.
