@@ -62,7 +62,7 @@ func (that *Peer) listenUdp() {
 					that.Router.Neighbor[k] = v
 				}
 			}
-			//delete(that.Router.Neighbor, that.Info.HashString())
+			// delete(that.Router.Neighbor, that.Info.HashString())
 			break
 		case UdpMethodExit:
 			log.Println("UdpMethodExit")

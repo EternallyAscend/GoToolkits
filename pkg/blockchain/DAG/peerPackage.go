@@ -15,7 +15,7 @@ func UnpackPackage(data []byte) *Package {
 	err := json.Unmarshal(data, p)
 	if nil != err {
 		log.Println("Unpack package json failed,", err)
-		//log.Println(string(data))
+		// log.Println(string(data))
 		return nil
 	}
 	return p
@@ -24,7 +24,7 @@ func UnpackPackage(data []byte) *Package {
 func TransferDataToPackage(data []byte, typeCode uint) ([]byte, error) {
 	p := &Package{
 		Type: typeCode,
-		//Length:  uint(len(data)),
+		// Length:  uint(len(data)),
 		Message: data,
 	}
 	return json.Marshal(p)
