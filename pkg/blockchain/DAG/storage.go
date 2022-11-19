@@ -2,8 +2,9 @@ package DAG
 
 import (
 	"encoding/json"
-	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 	"log"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 )
 
 type Header struct {
