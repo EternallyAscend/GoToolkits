@@ -82,3 +82,8 @@ docker run -d --name WebRunner0 -v /usr/share/website/gitlab:/gitlab  gitlab/git
 ```Shell
 git remote set-url --add origin `address`
 ```
+
+```Shell
+# macOS
+netstat -a -n | grep $port
+```

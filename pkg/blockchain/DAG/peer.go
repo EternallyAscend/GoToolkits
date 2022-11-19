@@ -45,7 +45,7 @@ func GeneratePeer(port, tcpPort uint) (*Peer, error) {
 	}, nil
 }
 
-// setBackground Setting Background Refresh Method and so on.
+// setBackground [Abandoned] Setting Background Refresh Method and so on.
 func (that *Peer) setBackground() {
 	ticker := time.NewTicker(DefaultRefreshTime)
 	ch := make(chan int)

@@ -38,43 +38,72 @@ func (that *Blockchain) Verify() bool {
 }
 
 type SingleHeader struct {
+	Merkle []byte `json:"merkle" yaml:"merkle"`
 	SHA512 []byte `json:"sha512" yaml:"sha512"`
 }
 
 type SingleBody struct {
-
+	Data  []byte `json:"data" yaml:"data"`
+	Nonce []byte `json:"nonce" yaml:"nonce"`
 }
 
-func (that *SingleBody) GenerateHeader() *SingleHeader {
+func (that *SingleBody) GenerateHeader(forwardHash []byte) *SingleHeader {
 	body, err := json.Marshal(that)
 	if nil != err {
 		log.Println(err)
 		return nil
 	}
-	return &SingleHeader{
-		SHA512: hash.SHA512(body),
+	header := &SingleHeader{
+		Merkle: hash.SHA512(body),
 	}
+	if nil != forwardHash {
+		header.SHA512 = hash.SHA512(append(forwardHash, body...))
+	} else {
+		header.SHA512 = header.Merkle
+	}
+	return header
 }
 
 type SingleBlock struct {
 	Header *SingleHeader `json:"header" yaml:"header"`
-	Body *SingleBody `json:"body" yaml:"body"`
-	Next *SingleBlock `json:"next" yaml:"next"`
+	Body   *SingleBody   `json:"body" yaml:"body"`
+	Next   *SingleBlock  `json:"next" yaml:"next"`
+	Back   *SingleBlock  `json:"back" yaml:"back"`
 }
 
-func (that *SingleBlock) Verify() bool {
+func (that *SingleBlock) Verify(backward *SingleBlock) bool {
 	body, err := json.Marshal(that.Body)
 	if nil != err {
 		log.Println(err)
 		return false
 	}
 	bodyHash := hash.SHA512(body)
-	if len(bodyHash) != len(that.Header.SHA512) {
+	if len(bodyHash) != len(that.Header.Merkle) {
 		return false
 	}
 	for i := range bodyHash {
-		if bodyHash[i] != that.Header.SHA512[i] {
+		if bodyHash[i] != that.Header.Merkle[i] {
 			return false
+		}
+	}
+	if nil != backward {
+		combineHash := hash.SHA512(append(backward.Header.SHA512, bodyHash...))
+		if len(combineHash) != len(that.Header.SHA512) {
+			return false
+		}
+		for i := range combineHash {
+			if combineHash[i] != that.Header.SHA512[i] {
+				return false
+			}
+		}
+	} else {
+		if len(bodyHash) != len(that.Header.SHA512) {
+			return false
+		}
+		for i := range bodyHash {
+			if bodyHash[i] != that.Header.SHA512[i] {
+				return false
+			}
 		}
 	}
 	return true
@@ -89,6 +118,8 @@ func (that *SingleChain) Append(head *SingleBlock) {
 	if nil == head {
 		return
 	}
+	head.Back = that.Latest
+
 	p := head
 	for nil != p.Next {
 		p = p.Next
@@ -103,7 +134,7 @@ func (that *SingleChain) Verify() bool {
 func (that *SingleChain) VerifyFrom(block *SingleBlock) bool {
 	for nil != block.Next {
 		block = block.Next
-		if !block.Verify() {
+		if !block.Verify(block.Back) {
 			return false
 		}
 	}

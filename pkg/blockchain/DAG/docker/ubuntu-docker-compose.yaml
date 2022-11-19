@@ -1,0 +1,59 @@
+version: "2"
+services:
+#  builder:
+#    image: golang
+#    command: sh -c 'cd /go/gtks/src && go build'
+#    #    command:
+#    #      - sh
+#    #      - -c
+#    #      - |
+#    #      - ls /go
+#    #      - cd /go/gtks/src
+#    #      - go build
+#    volumes:
+#      - ../../../../../GoToolkits:/go/gtks
+#    container_name: builder
+  server:
+    image: golang
+    ports:
+      - "8000:8000"
+      - "9000:9000"
+#    command: sh -c 'cd /go/gtks/src && go version'
+    volumes:
+      - ../../../../../GoToolkits:/go/gtks
+    container_name:
+      server
+    tty: true
+  controller:
+    image: golang
+    ports:
+      - "10000:10000"
+    depends_on:
+      - server
+    container_name:
+      controller
+    tty: true
+  peer1:
+    image: golang
+    ports:
+      - "8001:8001"
+      - "9001:9001"
+    volumes:
+      - ./data:/etc/data
+    depends_on:
+      - server
+      - controller
+    container_name: peer1
+    tty: true
+  peer2:
+    image: golang
+    ports:
+      - "8010:8010"
+      - "9010:9010"
+    volumes:
+      - ./data:/etc/data
+    depends_on:
+      - server
+      - controller
+    container_name: peer10
+    tty: true
