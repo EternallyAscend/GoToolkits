@@ -2,9 +2,10 @@ package DAG
 
 import (
 	"encoding/json"
+	"log"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/homomorphic/pedersonCommitment"
-	"log"
 )
 
 type Header struct {
@@ -53,8 +54,6 @@ func (that *Body) HashString() string {
 
 func (that *Body) AppendData(data []byte) {
 	that.Data = append(that.Data, data)
-
-
 }
 
 // Block DAG Data Structure.
