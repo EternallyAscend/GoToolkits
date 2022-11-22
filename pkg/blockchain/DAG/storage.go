@@ -3,17 +3,46 @@ package DAG
 import (
 	"encoding/json"
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
+	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/homomorphic/pedersonCommitment"
 	"log"
 )
 
 type Header struct {
 	// TODO Blockchain Hash.
+	Merkle []byte `json:"merkle" yaml:"merkle"`
+	SHA512 []byte `json:"sha512" yaml:"sha512"`
 	// TODO HE GH Arguments.
+	Dealer *pedersonCommitment.DealerUnit `json:"dealer" yaml:"dealer"`
+}
+
+func (that *Body) GenerateHeader(dealer *pedersonCommitment.DealerUnit, reference []*Block) *Header {
+	body, err := json.Marshal(that)
+	if nil != err {
+		return nil
+	}
+	header := &Header{
+		Merkle: hash.SHA512(body),
+		SHA512: nil,
+		Dealer: dealer,
+	}
+	for i := range that.Units {
+		// TODO Calculate the sum of Random.
+		dealer.R = that.Units[i].R
+	}
+	var data []byte
+	for i := range reference {
+		data = append(data, reference[i].Header.SHA512...)
+	}
+	data = append(data, header.Merkle...)
+	header.SHA512 = hash.SHA512(data)
+	return header
 }
 
 type Body struct {
 	// TODO HE Verify Information.
+	Units []*pedersonCommitment.VerifiableMessageUint
 	// TODO Compression Gradients.
+	Data [][]byte
 }
 
 func (that *Body) HashString() string {
@@ -22,12 +51,24 @@ func (that *Body) HashString() string {
 	return hash.SHA512String(d)
 }
 
+func (that *Body) AppendData(data []byte) {
+	that.Data = append(that.Data, data)
+
+
+}
+
 // Block DAG Data Structure.
 type Block struct {
 	Header    *Header  `json:"header" yaml:"header"`
 	Body      *Body    `json:"block" yaml:"block"`
 	Reference []*Block `json:"reference" yaml:"reference"`
 }
+
+func (that *Block) Verify() {}
+
+func (that *Block) Open() {}
+
+func (that *Block) Check() {}
 
 type Blockchain struct {
 	Bases []*Block `json:"bases" yaml:"bases"`

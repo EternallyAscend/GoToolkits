@@ -1,5 +1,22 @@
 package DAG
 
+import (
+	"errors"
+	"github.com/EternallyAscend/GoToolkits/pkg/command"
+)
+
+func ExecuteCommandString(str string) *command.Result {
+	cmd := command.GenerateCommand(str)
+	if nil == cmd {
+		return command.GenerateErrorResult(errors.New("Wrong command. "))
+	}
+	return ExecuteCommandWithArgs(cmd)
+}
+
+func ExecuteCommandWithArgs(command *command.Command) *command.Result {
+	return command.Execute()
+}
+
 // readGradient TODO Read from File or Transfer between Processes.
 func (that *Peer) readGradient(path string) []float64 {
 	return []float64{}

@@ -1,11 +1,21 @@
 package command
 
-import "bytes"
+import (
+	"bytes"
+)
 
 type Result struct {
 	err    error
 	stdout bytes.Buffer
 	stderr bytes.Buffer
+}
+
+func GenerateErrorResult(err error) *Result {
+	return &Result{
+		err:    err,
+		stdout: bytes.Buffer{},
+		stderr: bytes.Buffer{},
+	}
 }
 
 func (that *Result) GetOutputAsString() string {
