@@ -4,44 +4,33 @@ import (
 	"encoding/json"
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/homomorphic/pedersonCommitment"
+	"github.com/bwesterb/go-ristretto"
 	"log"
 )
 
 type Header struct {
-	// TODO Blockchain Hash.
+	// Blockchain Hash.
 	Merkle []byte `json:"merkle" yaml:"merkle"`
 	SHA512 []byte `json:"sha512" yaml:"sha512"`
-	// TODO HE GH Arguments.
+	// Dealer Shows H.E. Arguments GH and Sum of Random and Commitment.
 	Dealer *pedersonCommitment.DealerUnit `json:"dealer" yaml:"dealer"`
 }
 
-func (that *Body) GenerateHeader(dealer *pedersonCommitment.DealerUnit, reference []*Block) *Header {
-	body, err := json.Marshal(that)
-	if nil != err {
-		return nil
-	}
+// GenerateHeader Before Data Transfer, Exchange Arguments G and H.
+func (that *Body) GenerateHeader (dealer *pedersonCommitment.DealerUnit) *Header {
+	// TODO Start with HeaderRandom.
 	header := &Header{
-		Merkle: hash.SHA512(body),
+		Merkle: nil,
 		SHA512: nil,
 		Dealer: dealer,
 	}
-	for i := range that.Units {
-		// TODO Calculate the sum of Random.
-		dealer.R = that.Units[i].R
-	}
-	var data []byte
-	for i := range reference {
-		data = append(data, reference[i].Header.SHA512...)
-	}
-	data = append(data, header.Merkle...)
-	header.SHA512 = hash.SHA512(data)
 	return header
 }
 
 type Body struct {
-	// TODO HE Verify Information.
+	// H.E. Verify Information.
 	Units []*pedersonCommitment.VerifiableMessageUint
-	// TODO Compression Gradients.
+	// Compression Gradients.
 	Data [][]byte
 }
 
@@ -51,12 +40,6 @@ func (that *Body) HashString() string {
 	return hash.SHA512String(d)
 }
 
-func (that *Body) AppendData(data []byte) {
-	that.Data = append(that.Data, data)
-
-
-}
-
 // Block DAG Data Structure.
 type Block struct {
 	Header    *Header  `json:"header" yaml:"header"`
@@ -64,11 +47,81 @@ type Block struct {
 	Reference []*Block `json:"reference" yaml:"reference"`
 }
 
-func (that *Block) Verify() {}
+// CalculateHeader After Block AppendData Finished.
+func (that *Block) CalculateHeader() {
+	body, err := json.Marshal(that.Body)
+	if nil != err {
+		log.Println(err)
+		return
+	}
+	that.Header.Merkle = hash.SHA512(body)
+	// Calculate the Sum of Random and Commit Result.
+	for i := range that.Body.Units {
+		that.Header.Dealer.R.Add(that.Header.Dealer.R, that.Body.Units[i].R)
+		that.Header.Dealer.CommitPoint.Add(that.Header.Dealer.CommitPoint, that.Body.Units[i].CommitPoint)
+	}
+	var data []byte
+	for i := range that.Reference {
+		data = append(data, that.Reference[i].Header.SHA512...)
+	}
+	data = append(data, that.Header.Merkle...)
+	that.Header.SHA512 = hash.SHA512(data)
+}
 
-func (that *Block) Open() {}
+func (that *Block) AppendData(data []byte) {
+	that.Body.Data = append(that.Body.Data, data)
+	// Calculate Append Data with GH.
 
-func (that *Block) Check() {}
+	r := &ristretto.Scalar{}
+	r.Rand()
+
+	c := &ristretto.Point{}
+
+	tempPoint := ristretto.Point{}
+	// c = xG + rH
+	x := ristretto.Scalar{}
+	x.Derive(data)
+	// xG
+	tempPoint.ScalarMult(that.Header.Dealer.G, &x)
+	// rH
+	c.ScalarMult(that.Header.Dealer.H, r)
+	// c = xG + rH
+	c.Add(c, &tempPoint)
+
+	unit := &pedersonCommitment.VerifiableMessageUint{
+		R:           r,
+		CommitPoint: c,
+	}
+	// Append Unit into Body.
+	that.Body.Units = append(that.Body.Units, unit)
+}
+
+// Packaged Calculate Header.
+func (that *Block) Packaged() {
+	// Calculate Random and Commitment Summary.
+	that.CalculateHeader()
+	// TODO End with TailRandom Value.
+}
+
+// Verify Verify Block Correction.
+func (that *Block) Verify() bool {
+	if len(that.Body.Data) != len(that.Body.Units) {
+		return false
+	}
+	if len(that.Body.Data) > 0 {
+		tr := ristretto.Scalar{}
+		tc := ristretto.Point{}
+		tr.Set(that.Body.Units[0].R)
+		tc.Set(that.Body.Units[0].CommitPoint)
+		for i := 1; i < len(that.Body.Data); i++ {
+			tr.Add(&tr, that.Body.Units[i].R)
+			tc.Add(&tc, that.Body.Units[i].CommitPoint)
+		}
+		return that.Header.Dealer.CommitPoint.Equals(&tc) && that.Header.Dealer.R.Equals(&tr)
+	} else {
+		return true
+	}
+}
 
 type Blockchain struct {
 	Bases []*Block `json:"bases" yaml:"bases"`
