@@ -2,10 +2,11 @@ package DAG
 
 import (
 	"encoding/json"
+	"log"
+
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/hash"
 	"github.com/EternallyAscend/GoToolkits/pkg/cryptography/homomorphic/pedersonCommitment"
 	"github.com/bwesterb/go-ristretto"
-	"log"
 )
 
 type Header struct {
@@ -17,7 +18,7 @@ type Header struct {
 }
 
 // GenerateHeader Before Data Transfer, Exchange Arguments G and H.
-func (that *Body) GenerateHeader (dealer *pedersonCommitment.DealerUnit) *Header {
+func (that *Body) GenerateHeader(dealer *pedersonCommitment.DealerUnit) *Header {
 	// TODO Start with HeaderRandom.
 	header := &Header{
 		Merkle: nil,
