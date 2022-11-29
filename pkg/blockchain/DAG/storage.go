@@ -34,10 +34,18 @@ type Body struct {
 	Data [][]byte
 }
 
+func (that *Body) Hash() []byte {
+	byteData, err := json.Marshal(that)
+	if nil != err {
+		log.Println(err)
+		return nil
+	}
+	// TODO Calculate Body Byte as Merkle.
+	return byteData
+}
+
 func (that *Body) HashString() string {
-	var d []byte
-	// TODO Calculate Body Byte.
-	return hash.SHA512String(d)
+	return hash.SHA512String(that.Hash())
 }
 
 // Block DAG Data Structure.

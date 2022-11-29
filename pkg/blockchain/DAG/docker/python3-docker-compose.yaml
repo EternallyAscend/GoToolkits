@@ -1,0 +1,21 @@
+version "3"
+services:
+  server:
+    image: python3
+    ports:
+      - "10000:10000"
+    volumes:
+      - ../../../../../GoToolkits:/go/gtks
+    container_name:
+      server
+    tty: true
+
+  controller:
+    image: python3
+    ports: "10001:10001"
+    depends_on:
+      - server
+    container_name:
+      controller
+  peer0:
+    image: python3
