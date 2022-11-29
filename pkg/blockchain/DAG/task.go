@@ -1,8 +1,9 @@
 package DAG
 
 import (
-	"github.com/EternallyAscend/GoToolkits/pkg/command"
 	"time"
+
+	"github.com/EternallyAscend/GoToolkits/pkg/command"
 )
 
 type Task struct {
@@ -26,4 +27,3 @@ func GenerateTask(command string, broadcast bool) *Task {
 func (that *Task) Execute() *command.Result {
 	return command.GenerateCommand(that.Command).Execute()
 }
-
